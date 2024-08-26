@@ -120,7 +120,6 @@ public class NotificationPanel extends JDialog {
         JPanel notificationItem = new JPanel(new BorderLayout());
         notificationItem.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
         notificationItem.setBackground(Color.WHITE);
-
 //        JLabel notificationLabel = new JLabel(notificationText);
 //        notificationLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 //        notificationLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

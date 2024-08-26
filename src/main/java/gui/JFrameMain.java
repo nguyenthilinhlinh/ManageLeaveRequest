@@ -1,6 +1,5 @@
 package gui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -13,9 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.prefs.Preferences;
 import java.awt.event.ActionEvent;
@@ -27,23 +23,20 @@ import entity.Employees;
 import entity.Role;
 import helper.RegexConst;
 import helper.Valid;
-import subFrame.FormApprove;
-
+import component.Processed;
+import component.PendingApproval;
 import java.awt.event.MouseAdapter;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.AncestorEvent;
 import component.AddLeaveRequest;
-
+import component.VacationRequest;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import component.LeaveTypes;
 import component.NotificationPanel;
-import component.PendingApproval;
-import component.Processed;
 import component.ProfileEmployee;
 import component.Static;
-import component.VacationRequest;
 
 public class JFrameMain extends JFrame {
 
@@ -60,9 +53,6 @@ public class JFrameMain extends JFrame {
 	private JPanel panelStatistics;
 	private JPanel panelApproval;
 	private JPanel panelVacation;
-	private JTabbedPane tabbedPane;
-	private JPanel panelRequest;
-	private JPanel panelVactionRequest;
 	private JTabbedPane tabbedPaneApproval;
 	private JPanel panelPending;
 	private JPanel panelProcessed;
@@ -72,7 +62,7 @@ public class JFrameMain extends JFrame {
 	private JLabel lblNewLabel_1;
 	private JLabel lblNameEmployeeLogin;
 	private JCheckBox chkRememberMe;
-	private Employees emp;
+	private Employees emp = null;
 	private Processed processed;
 	private PendingApproval pendingApproval;
 	private Integer pageNumber = 1; // Trang thu may
@@ -91,9 +81,8 @@ public class JFrameMain extends JFrame {
 	private AddLeaveRequest addLeaveRequest;
 	private Role role;
 	private Static static1;
-	private JButton btnNewButton;
-	private JLabel bellLabel;
-	private NotificationPanel notification;
+	private JPanel panelVactionRequest;
+	private NotificationPanel notificationPanel;
 
 	/**
 	 * Launch the application.
@@ -120,10 +109,13 @@ public class JFrameMain extends JFrame {
 	 * Create the frame.
 	 */
 	public JFrameMain() {
+		setBackground(new Color(243, 202, 82));
+		setResizable(false);
 		setTitle("Leave request");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1266, 775);
 		contentPaneCard = new JPanel();
+		contentPaneCard.setBackground(new Color(243, 202, 82));
 		contentPaneCard.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPaneCard);
@@ -135,7 +127,7 @@ public class JFrameMain extends JFrame {
 //		Color panelgreen = Color.decode("#B4E380");
 		Color panelgreen = Color.decode("#7ABA78");
 		Color panelgrey = Color.decode("#686D76");
-		panelLogin.setBackground(panelyellow);
+		panelLogin.setBackground(new Color(243, 202, 82));
 		contentPaneCard.add(panelLogin, "Login");
 		panelLogin.setLayout(null);
 
@@ -145,12 +137,12 @@ public class JFrameMain extends JFrame {
 		panelLogin.add(panel);
 		JLabel lblEmail = new JLabel("Email:");
 		lblEmail.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblEmail.setBounds(194, 110, 88, 35);
+		lblEmail.setBounds(194, 128, 88, 35);
 		panel.add(lblEmail);
 
 		txtEmail = new JTextField();
 		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		txtEmail.setBounds(321, 109, 344, 39);
+		txtEmail.setBounds(321, 127, 344, 39);
 		panel.add(txtEmail);
 		txtEmail.setColumns(10);
 
@@ -224,10 +216,10 @@ public class JFrameMain extends JFrame {
 		panel.add(btnLogin);
 		panel.add(btnReset);
 
-		lblNewLabel_1 = new JLabel("Member Login");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblNewLabel_1 = new JLabel("Login");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 42));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(115, 24, 619, 46);
+		lblNewLabel_1.setBounds(10, 21, 837, 59);
 		panel.add(lblNewLabel_1);
 
 		panelMain = new JPanel();
@@ -239,7 +231,7 @@ public class JFrameMain extends JFrame {
 		panelMain.add(penalSiledbar, BorderLayout.WEST);
 		Color colorbutton = Color.decode("#88D66C");
 		btnStatistics = new JButton("Statistics");
-		btnStatistics.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnStatistics.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnStatistics.setMnemonic('S');
 		btnStatistics.setBackground(colorbutton);
 		btnStatistics.addActionListener(new ActionListener() {
@@ -249,7 +241,8 @@ public class JFrameMain extends JFrame {
 		});
 
 		btnApproval = new JButton("Approval");
-		btnApproval.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnApproval.setVisible(false);
+		btnApproval.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnApproval.setMnemonic('A');
 		btnApproval.setBackground(new Color(136, 214, 108));
 		btnApproval.addActionListener(new ActionListener() {
@@ -259,7 +252,7 @@ public class JFrameMain extends JFrame {
 		});
 
 		btnVacation = new JButton("Vacation");
-		btnVacation.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnVacation.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnVacation.setMnemonic('V');
 		btnVacation.setBackground(colorbutton);
 		btnVacation.addActionListener(new ActionListener() {
@@ -269,7 +262,8 @@ public class JFrameMain extends JFrame {
 		});
 
 		btnLeavetypes = new JButton("LeaveTypes");
-		btnLeavetypes.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnLeavetypes.setVisible(false);
+		btnLeavetypes.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnLeavetypes.setMnemonic('L');
 		btnLeavetypes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -281,7 +275,7 @@ public class JFrameMain extends JFrame {
 		btnLeavetypes.setBackground(new Color(136, 214, 108));
 		
 		btnLogout = new JButton("Logout");
-		btnLogout.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnLogout.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnLogout.setMnemonic('L');
 		btnLogout.setBackground(new Color(136, 214, 108));
 		btnLogout.addActionListener(new ActionListener() {
@@ -291,7 +285,7 @@ public class JFrameMain extends JFrame {
 		});
 		
 		btnProfileEmployee = new JButton("ProfileEmployee");
-		btnProfileEmployee.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnProfileEmployee.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnProfileEmployee.setMnemonic('P');
 		btnProfileEmployee.setBackground(new Color(136, 214, 108));
 		btnProfileEmployee.addActionListener(new ActionListener() {
@@ -341,93 +335,35 @@ public class JFrameMain extends JFrame {
 		lblNameEmployeeLogin.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		lblNameEmployeeLogin.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		lblNewLabel = new JLabel("");
-		lblNewLabel.setBackground(new Color(255, 255, 0));
-		
-		btnNewButton = new JButton("<html>\r\n\r\n<p>&#xf0f3; </p>\r\n\r\n</html>");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showNotificationDialog(e);
-			}
-		});
-		
-		bellLabel = new JLabel();
-        BufferedImage originalImage;
-		try {
-			originalImage = ImageIO.read(new File("C:\\Users\\ngthi\\eclipse-workspace\\projectLeaveManagement\\image\\icon.png"));
-			Image scaledImage = originalImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Adjust size as needed
-	        ImageIcon userIcon = new ImageIcon(scaledImage);
-//			ImageIcon userIcon = new ImageIcon("image/user.png");
-	        bellLabel.setIcon(userIcon);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		System.out.println("here?");
-		
-        
-        panelNarbar.add(bellLabel);
-   
-        
-//        GlassPanel glass = new GlassPanel();
-//		glass.setBounds(0, 0, 1043, 649);
-//		notificationPanel.add(glass);
+		lblNewLabel = new JLabel("Thông Báo");
 
-//        // Tạo NotificationPanel và thêm nó vào notificationPanel
+		
+		lblNewLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 
-//        notificationPanel.add(notification);
-        
-        
-        
-//        frame.getContentPane().add(notificationPanel);
-//        frame.pack();
-//        frame.setLocationRelativeTo(null);
-//        frame.setVisible(true);
-//    	notificationPanel.setVisible(true);
-//    	panelSubCard.add(notificationPanel, "noti");
-//    	notificationPanel.setLayout(null);
-//    	panelNarbar.add(notificationPanel, BorderLayout.EAST);
-//    	notificationPanel.add(notification);
-    	
-//        ---------------------------
-        bellLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            	notification.setVisible(true);
-            	JOptionPane.showMessageDialog(null, "a");
-            }
-        });
-        
  
-		
-		
+                
+				notificationPanel.setVisible(true);
+            }
+		});
+		lblNewLabel.setBackground(new Color(255, 255, 0));
 		GroupLayout gl_panelNarbar = new GroupLayout(panelNarbar);
 		gl_panelNarbar.setHorizontalGroup(
 			gl_panelNarbar.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelNarbar.createSequentialGroup()
-					.addGap(32)
-					.addComponent(btnNewButton)
-					.addGap(30)
-					.addComponent(bellLabel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-					.addGap(144)
+					.addGap(76)
 					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGap(275)
 					.addComponent(lblNameEmployeeLogin, GroupLayout.PREFERRED_SIZE, 471, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(370, Short.MAX_VALUE))
+					.addContainerGap(349, Short.MAX_VALUE))
 		);
 		gl_panelNarbar.setVerticalGroup(
 			gl_panelNarbar.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelNarbar.createSequentialGroup()
-					.addGroup(gl_panelNarbar.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_panelNarbar.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(gl_panelNarbar.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-								.addComponent(bellLabel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_panelNarbar.createParallelGroup(Alignment.LEADING)
-							.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
-							.addComponent(lblNameEmployeeLogin, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)))
+					.addGroup(gl_panelNarbar.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNameEmployeeLogin, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+						.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		panelNarbar.setLayout(gl_panelNarbar);
@@ -451,19 +387,21 @@ public class JFrameMain extends JFrame {
 		panelApproval.setLayout(null);
 
 		tabbedPaneApproval = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPaneApproval.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tabbedPaneApproval.setBounds(32, 11, 1001, 625);
 		panelApproval.add(tabbedPaneApproval);
 
 //		pendingApproval = new PendingApproval();
 //		pendingApproval.setBounds(10, 11, 976, 577);
 //		panelPending.add(pendingApproval);
-
 		panelProcessed = new JPanel();
-
+		panelProcessed.setBackground(new Color(191, 246, 195));
 		tabbedPaneApproval.addTab("Processed", null, panelProcessed, null);
+		
 		panelProcessed.setLayout(null);
 
 		panelPending = new JPanel();
+		panelPending.setBackground(new Color(191, 246, 195));
 
 		tabbedPaneApproval.addTab("Pending Approval", null, panelPending, null);
 		panelPending.setLayout(new CardLayout(0, 0));
@@ -476,33 +414,12 @@ public class JFrameMain extends JFrame {
 		panelVacation.setBackground(new Color(243, 202, 82));
 		panelSubCard.add(panelVacation, "Vacation");
 		panelVacation.setLayout(null);
-
-		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-
-		tabbedPane.setBounds(32, 11, 1001, 625);
-		panelVacation.add(tabbedPane);
-
-		panelRequest = new JPanel();
-		panelRequest.setBackground(new Color(191, 246, 195));
-
-		tabbedPane.addTab("New Request", null, panelRequest, null);
-		panelRequest.setLayout(null);
-		tabbedPane.addChangeListener((ChangeListener) new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				int selectedIndex = tabbedPane.getSelectedIndex();
-				if (selectedIndex == 0) {
-					loadNewRequestData();
-				} else if (selectedIndex == 1) {
-					loadVacationRequestsData();
-				}
-			}
-		});
-
+		
 		panelVactionRequest = new JPanel();
-		panelVactionRequest.setBackground(new Color(191, 246, 195));
-		tabbedPane.addTab("Vacation Requests", null, panelVactionRequest, null);
 		panelVactionRequest.setLayout(null);
+		panelVactionRequest.setBackground(new Color(191, 246, 195));
+		panelVactionRequest.setBounds(0, 0, 1055, 671);
+		panelVacation.add(panelVactionRequest);
 
 		panelLeaveTypes = new JPanel();
 		panelLeaveTypes.setBackground(new Color(243, 202, 82));
@@ -517,22 +434,6 @@ public class JFrameMain extends JFrame {
 		panelProfileEmployee.setBackground(new Color(243, 202, 82));
 		panelSubCard.add(panelProfileEmployee, "ProfileEmployee");
 		panelProfileEmployee.setLayout(null);
-		
-//		vacationRequest = new VacationRequest((Employees) null);
-//		vacationRequest.setBounds(10, 11, 976, 564);
-//		panelVactionRequest.add(vacationRequest);
-		
-		tabbedPane.addChangeListener((ChangeListener) new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int selectedIndex = tabbedPane.getSelectedIndex();
-                if (selectedIndex == 0) {
-                    loadNewRequestData();
-                } else if (selectedIndex == 1) {
-                    loadVacationRequestsData();
-                }
-            }
-        });
 		
 		tabbedPaneApproval.addChangeListener((ChangeListener) new ChangeListener() {
             @Override
@@ -591,13 +492,8 @@ public class JFrameMain extends JFrame {
 	        case "Vacation" -> {
 	            highlightButton(btnVacation);
 	            var cardLayout = (CardLayout) panelSubCard.getLayout();
-	            cardLayout.show(panelSubCard, "Vacation");
-	            addLeaveRequest = new AddLeaveRequest();
-	            addLeaveRequest.setBounds(52, 42, 898, 511);
-	            panelRequest.add(addLeaveRequest);
-
-	            vacationRequest = new VacationRequest(emp, role);
-	            vacationRequest.setBounds(10, 11, 976, 564);
+	            cardLayout.show(panelSubCard, "Vacation");           
+	            loadVacationRequestsData();
 	        }
 
 	        case "LeaveTypes" -> {
@@ -617,6 +513,8 @@ public class JFrameMain extends JFrame {
 	            var cardLayout = (CardLayout) contentPaneCard.getLayout();
 	            loadSavedLoginDetails();
 	            cardLayout.show(contentPaneCard, "Login");
+	            btnApproval.setVisible(false);
+	            btnLeavetypes.setVisible(false);
 	        }
 
 	        case "GetMain" -> {
@@ -625,6 +523,8 @@ public class JFrameMain extends JFrame {
 
 	        case "Login" -> {
 	            checkLogin();
+	            panelStatistics.setVisible(true);
+//	            btnVacation.setVisible(false);
 	        }
 
 	        case "Reset" -> {
@@ -661,7 +561,7 @@ public class JFrameMain extends JFrame {
 
 	    var dao = new EmployeeDao();
 	    emp = dao.checkLogin(email, password);
-	    JOptionPane.showMessageDialog(null, emp.toString());
+	    
 	    if (emp != null) {
 	        // Save login details if "Remember Me" is selected
 	        Preferences prefs = Preferences.userNodeForPackage(JFrameMain.class);
@@ -674,23 +574,29 @@ public class JFrameMain extends JFrame {
 
 	        var cardLayout = (CardLayout) contentPaneCard.getLayout();
 	        role = dao.selectRole(emp.getEmployeeID());
-	        JOptionPane.showMessageDialog(null, role.getRoleName());
-	        lblNameEmployeeLogin.setText("Welcome, " + emp.getEmployeeName() + " (" + role.getRoleName() + ")");
+	        
+	        
 	        
 	        switch (role.getRoleName()) {
 	            case "User" -> {
-	                btnApproval.setVisible(false);
 	            }
 	            case "Admin" -> {
-	              
+	            	btnApproval.setVisible(true);
+	            	btnLeavetypes.setVisible(true);
 	            }
 	            
 	            case "Leader" -> {
-	            	 
+	            	btnApproval.setVisible(true);
 	            }
 	            
 	        }
 	        
+			
+			notificationPanel = new NotificationPanel(emp.getEmployeeID());
+			
+	        
+	        static1.loaddata(role, emp);
+	        lblNameEmployeeLogin.setText("Welcome, " + emp.getEmployeeName() + " (" + role.getRoleName() + ")");
 	        cardLayout.show(contentPaneCard, "Main");
 	    } else {
 	        JOptionPane.showMessageDialog(null, "The account does not exist, please re-enter");
@@ -701,11 +607,9 @@ public class JFrameMain extends JFrame {
 		profileEmployee.setBounds(10, 11, 1042, 649);
 		panelProfileEmployee.add(profileEmployee);
 //		
-		
-		
-        notification = new NotificationPanel(emp.getEmployeeID());
-        notification.setVisible(false);
 	}
+	
+	
 	
 	
 	private boolean isValidEmail(String email) {
@@ -738,18 +642,18 @@ public class JFrameMain extends JFrame {
         prefs.remove("password");
     }
 
-    private void loadNewRequestData() {
-		 panelRequest.removeAll();
-		 addLeaveRequest = new AddLeaveRequest();
-		 addLeaveRequest.setBounds(52, 42, 898, 511);
-		 panelRequest.add(addLeaveRequest);  
-		 panelRequest.revalidate();
-	     panelRequest.repaint();
-	    }
+//    private void loadNewRequestData() {
+//    	panelVactionRequest.removeAll();
+//		 addLeaveRequest = new AddLeaveRequest();
+//		 addLeaveRequest.setBounds(52, 42, 898, 511);
+//		 panelRequest.add(addLeaveRequest);  
+//		 panelRequest.revalidate();
+//	     panelRequest.repaint();
+//	    }
 	 private void loadVacationRequestsData() {
 		 panelVactionRequest.removeAll();
 		 vacationRequest = new VacationRequest(emp, role);
-		 vacationRequest.setBounds(10, 11, 976, 564);
+		 vacationRequest.setBounds(10, 11, 1035, 649);
 		 panelVactionRequest.add(vacationRequest);  
 		 panelVactionRequest.revalidate();
 		 panelVactionRequest.repaint();
@@ -773,14 +677,5 @@ public class JFrameMain extends JFrame {
 		 panelPending.repaint();
 		 
 	 }
-	protected void showNotificationDialog(ActionEvent e) {
-		notification.setVisible(true);
-	}
 	
-//	private void toggleNotificationPanel() {
-//		 var cardLayout = (CardLayout) contentPaneCard.getLayout();
-//         cardLayout.show(contentPaneCard, "noti");
-////		notificationPanel.setVisible(!notificationPanel.isVisible());
-////		JOptionPane.showMessageDialog(null, "a");
-//    }
 }

@@ -22,10 +22,12 @@ import dao.EmployeeDao;
 import dao.LeaveDocumentDao;
 import dao.LeaveRequestDao;
 import dao.LeaveTypeDao;
+import dao.NotificationDao;
 import entity.Employees;
 import entity.LeaveDocument;
 import entity.LeaveRequests;
 import entity.LeaveType;
+import entity.Notification;
 import entity.Role;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
@@ -74,6 +76,7 @@ public class AddLeaveRequest extends JPanel {
 	private JLabel lblImage;
 	private JButton btnUpdate;
 	private JButton btnSubmit;
+	private Notification noti;
 	/**
 	 * Create the panel.
 	 */
@@ -580,6 +583,20 @@ public class AddLeaveRequest extends JPanel {
 
 			va.getJformEdit().setVisible(false);
 			va.showleaveRequest();
+			
+            var noti = new Notification();
+			var notificationDao = new NotificationDao();
+			noti = new Notification();
+			noti.setLeaveRequestID(leaveRequestID);
+			noti.setMessage("abc");
+			noti.setReceiverID(lr.getApproverId());
+			var notification = notificationDao.insertNotification(noti);
+			if (notification > 0) {
+                JOptionPane.showMessageDialog(null, "Notification successfully inserted.");
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to insert notification.");
+            }
+			
 		}
 	}
 
