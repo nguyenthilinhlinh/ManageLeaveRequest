@@ -266,6 +266,17 @@ begin
 end
 go
 
+select emp.*,p.*,  er.* from Employees emp
+join EmployeeRoles er on er.EmployeeID = emp.EmployeeID
+join Employee_positions ep on ep.EmployeeID = emp.EmployeeID
+join Positions p on p.PositionID = ep.PositionID
+where  p.DepartmentID =(SELECT						 d.DepartmentID
+																					FROM  Departments d
+																					Join Positions p  on p.DepartmentID = d.DepartmentID
+																					Join Employee_positions ep on ep.PositionID = p.PositionID
+																					WHERE ep.EmployeeID = 3 )
+
+
 -- select count id all of statusLR in ('Approved by Lead', 'Viewed by HR') for (admin) 
 create or alter proc countLRforAdmin
 @empID int 
@@ -604,20 +615,6 @@ BEGIN
 END
 go 
 
-CREATE PROCEDURE GetNotificationsByEmployee
-    @EmployeeID INT
-AS
-BEGIN
-    -- Select notifications for the specified employee
-    SELECT NotificationID, LeaveRequestID, NotificationDate, ReceiverID, Message, Status
-    FROM Notifications
-    WHERE ReceiverID = @EmployeeID
-    ORDER BY Status DESC, NotificationDate DESC;
-END
-EXEC GetNotificationsByEmployee @EmployeeID = 1;
-
-SELECT * FROM Notifications WHERE ReceiverID = 1;
-
 -- Insert data for table LeaveRequests 
 create or alter proc InsertLeaveRequest
 @employeeId int,
@@ -635,6 +632,7 @@ BEGIN
 	SELECT SCOPE_IDENTITY() AS LeaveRequestID;
 END
 go
+
 
 --update leaveRequest by id
 create or alter proc updateLeaveRequest
@@ -705,10 +703,12 @@ create or alter proc InsertNotification
 AS
 BEGIN
     INSERT INTO Notifications (LeaveRequestID, NotificationDate, ReceiverID, Message, Status)
-    VALUES (@LeaveRequestID, GETDATE(), @ReceiverID, @Message, 1);
+    VALUES (@LeaveRequestID, GETDATE(), @ReceiverID, @Message, 0);
 END;
 GO
-
+SELECT EmployeeID 
+FROM Employees 
+WHERE EmployeeID = ReceiverID;
 -- select leave Documents by idLeaverequest
 create or alter proc selLeaveDocument
     @LeaveRequestID INT
@@ -734,3 +734,240 @@ go
 
 
 select * from LeaveRequests where EmployeeID = 5
+
+
+CREATE PROCEDURE GetNotificationsByEmployee
+    @EmployeeID INT
+AS
+BEGIN
+    -- Select notifications for the specified employee
+    SELECT NotificationID, LeaveRequestID, NotificationDate, ReceiverID, Message, Status
+    FROM Notifications
+    WHERE ReceiverID = @EmployeeID
+    ORDER BY Status DESC, NotificationDate DESC;
+END
+EXEC GetNotificationsByEmployee @EmployeeID = 1;
+
+SELECT * FROM Notifications WHERE ReceiverID = 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+-- Insert data into Departments
+INSERT INTO Departments (DepartmentName, Status) VALUES 
+('Human Resources', 1),
+('Finance', 1),
+('IT', 1),
+('Marketing', 1),
+('Sales', 1),
+('Operations', 1),
+('Customer Service', 1);
+
+-- Insert data into Positions
+INSERT INTO Positions (DepartmentID, PositionName, Status) VALUES 
+(1, 'HR Manager', 1),
+(2, 'Accountant', 1),
+(3, 'IT Specialist', 1),
+(4, 'Marketing Specialist', 1),
+(5, 'Sales Representative', 1),
+(6, 'Operations Manager', 1),
+(7, 'Customer Service Representative', 1),
+(1, 'Project Manager', 1),
+(2, 'Software Engineer', 1),
+(3, 'Data Analyst', 1),
+(4, 'UX/UI Designer', 1),
+(5, 'Quality Assurance', 1),
+(6, 'DevOps Engineer', 1),
+(7, 'Product Owner', 1),
+(1, 'Business Analyst', 1),
+(2, 'System Architect', 1),
+(3, 'Database Administrator', 1);
+
+
+-- Insert data into Employees
+INSERT INTO Employees (FullName, Email, Password, Status) VALUES 
+('John Doe', 'john.doe@example.com', 'password123', 1),
+('Jane Smith', 'jane.smith@example.com', 'password123', 1),
+('Robert Johnson', 'robert.johnson@example.com', 'password123', 1),
+('Emily Davis', 'emily.davis@example.com', 'password123', 1),
+('Michael Brown', 'michael.brown@example.com', 'password123', 1),
+('Linda Williams', 'linda.williams@example.com', 'password123', 1),
+('David Wilson', 'david.wilson@example.com', 'password123', 1),
+('Alice Johnson', 'alice.johnson@example.com', 'passwordAlice', 1),
+('Bob Smith', 'bob.smith@example.com', 'passwordBob', 1),
+('Charlie Davis', 'charlie.davis@example.com', 'passwordCharlie', 1),
+('Diana Brown', 'diana.brown@example.com', 'passwordDiana', 1),
+('Ethan White', 'ethan.white@example.com', 'passwordEthan', 1),
+('Fiona Green', 'fiona.green@example.com', 'passwordFiona', 1),
+('George Black', 'george.black@example.com', 'passwordGeorge', 1),
+('Hannah Lewis', 'hannah.lewis@example.com', 'passwordHannah', 1),
+('Ian Clark', 'ian.clark@example.com', 'passwordIan', 1),
+('Jane Wright', 'jane.wright@example.com', 'passwordJane', 1);
+
+-- Insert data into Employee_positions
+INSERT INTO Employee_positions (EmployeeID, PositionID) VALUES 
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 12),
+(11, 13),
+(12, 14),
+(13, 16),
+(14, 10),
+(15, 11),
+(16, 17),
+(17, 15);
+
+
+INSERT INTO Roles (RoleName, Status) VALUES 
+('Admin', 1),
+('Leader', 1),
+('User', 1);
+
+-- Insert data into EmployeeRoles
+INSERT INTO EmployeeRoles (EmployeeID, RoleID, Status) VALUES 
+(1, 1, 1), -- John Doe as Admin
+(2, 2, 1), -- Jane Smith as Manager
+(3, 3, 1), -- Robert Johnson as User
+(4, 3, 1), -- Emily Davis as User
+(5, 2, 1), -- Michael Brown as Manager
+(6, 3, 1), -- Linda Williams as User
+(7, 3, 1), -- David Wilson as User
+(8, 3, 1), -- EmployeeID 1 với RoleID 1
+(9, 2, 1), -- EmployeeID 2 với RoleID 2
+(10, 3, 1), -- EmployeeID 3 với RoleID 3
+(11, 3, 1), 
+(12, 2, 1), 
+(13, 3, 1), 
+(14, 3, 1), 
+(15, 2, 1), 
+(16, 3, 1), 
+(17, 3, 1);
+
+-- find leader
+CREATE OR ALTER PROCEDURE GetLeaderRole
+AS
+BEGIN
+    -- Tìm kiếm thông tin của vai trò 'Leader'
+    SELECT RoleID, RoleName, Status
+    FROM Roles
+    WHERE RoleName = 'Leader';
+END;
+GO
+EXEC GetLeaderRole;
+
+-- Insert data into EmployeeDetails
+INSERT INTO EmployeeDetails (EmployeeID, Image, PhoneNumber, Address, DateOfBirth, Gender, Status) VALUES 
+(1, NULL, '123-456-7890', '123 Main St, Cityville', '1990-01-01', 'Male', 1),
+(2, NULL, '234-567-8901', '456 Elm St, Townsville', '1992-02-02', 'Female', 1),
+(3, NULL, '345-678-9012', '789 Oak St, Villagetown', '1988-03-03', 'Male', 1),
+(4, NULL, '456-789-0123', '101 Pine St, Hamletburg', '1995-04-04', 'Female', 1),
+(5, NULL, '567-890-1234', '202 Maple St, Smallcity', '1985-05-05', 'Male', 1),
+(6, NULL, '678-901-2345', '303 Cedar St, Bigcity', '1991-06-06', 'Female', 1),
+(7, NULL, '789-012-3456', '404 Birch St, Capitaltown', '1993-07-07', 'Male', 1),
+(8, 'image1.png', '1234567890', '123 Main St', '1985-01-01', 'Male', 1),
+(9, 'image2.png', '2345678901', '456 Elm St', '1988-02-02', 'Female', 1),
+(10, 'image3.png', '3456789012', '789 Maple St', '1990-03-03', 'Male', 1),
+(11, 'image4.png', '4567890123', '101 Pine St', '1992-04-04', 'Female', 1),
+(12, 'image5.png', '5678901234', '202 Oak St', '1994-05-05', 'Male', 1),
+(13, 'image6.png', '6789012345', '303 Birch St', '1996-06-06', 'Female', 1),
+(14, 'image7.png', '7890123456', '404 Cedar St', '1998-07-07', 'Male', 1),
+(15, 'image8.png', '8901234567', '505 Walnut St', '2000-08-08', 'Female', 1),
+(16, 'image9.png', '9012345678', '606 Poplar St', '1982-09-09', 'Male', 1),
+(17, 'image10.png', '0123456789', '707 Ash St', '1984-10-10', 'Female', 1);
+
+
+
+-- Insert data into LeaveTypes
+INSERT INTO LeaveTypes (LeaveTypeName, LeaveTypeDescription, LeaveDaysPerYear, Status) VALUES 
+('Annual Leave', 'Paid time off for vacations and personal use.', 15, 1),
+('Sick Leave', 'Paid leave for medical reasons.', 10, 1),
+('Maternity Leave', 'Leave for maternity purposes.', 90, 1),
+('Paternity Leave', 'Leave for fathers after the birth of a child.', 14, 1),
+('Unpaid Leave', 'Time off without pay.', 0, 1);
+
+-- Insert data into LeaveRequests
+INSERT INTO LeaveRequests (EmployeeID, LeaveTypeID, StartDate, EndDate, Reason, StatusLR, SubmissionDate, ApproverID, ApprovalDate, Status) VALUES 
+(1, 1, '2024-08-01', '2024-08-10', 'Annual vacation', 'Submitted', '2024-07-01', 2, NULL, 1),
+(2, 2, '2024-08-05', '2024-08-10', 'Medical issue', 'Viewed by Lead', '2024-07-02', 3, NULL, 1),
+(3, 3, '2024-08-10', '2024-08-20', 'Maternity leave', 'Approved by Lead', '2024-07-03', 4, '2024-07-04', 1),
+(4, 4, '2024-08-15', '2024-08-25', 'Paternity leave', 'Viewed by HR', '2024-07-04', 5, NULL, 1),
+(5, 5, '2024-08-20', '2024-08-30', 'Unpaid leave', 'Approved by HR', '2024-07-05', 6, '2024-07-06', 1),
+(6, 1, '2024-09-01', '2024-09-07', 'Annual vacation', 'Rejected', '2024-07-06', 7, NULL, 1),
+(7, 2, '2024-09-10', '2024-09-15', 'Medical issue', 'Submitted', '2024-07-07', 1, NULL, 1),
+(1, 3, '2024-09-15', '2024-09-30', 'Maternity leave', 'Viewed by Lead', '2024-07-08', 2, NULL, 1),
+(2, 4, '2024-10-01', '2024-10-07', 'Paternity leave', 'Approved by Lead', '2024-07-09', 3, '2024-07-10', 1),
+(3, 5, '2024-10-10', '2024-10-15', 'Unpaid leave', 'Viewed by HR', '2024-07-10', 4, NULL, 1),
+(4, 1, '2024-10-15', '2024-10-20', 'Annual vacation', 'Approved by HR', '2024-07-11', 5, '2024-07-12', 1),
+(5, 2, '2024-11-01', '2024-11-10', 'Medical issue', 'Rejected', '2024-07-12', 6, NULL, 1),
+(6, 3, '2024-11-15', '2024-11-30', 'Maternity leave', 'Submitted', '2024-07-13', 7, NULL, 1),
+(7, 4, '2024-12-01', '2024-12-07', 'Paternity leave', 'Viewed by Lead', '2024-07-14', 1, NULL, 1),
+(1, 5, '2024-12-10', '2024-12-20', 'Unpaid leave', 'Approved by Lead', '2024-07-15', 2, '2024-07-16', 1),
+(2, 1, '2024-12-15', '2024-12-22', 'Annual vacation', 'Viewed by HR', '2024-07-16', 3, NULL, 1),
+(3, 2, '2024-12-20', '2024-12-31', 'Medical issue', 'Approved by HR', '2024-07-17', 4, '2024-07-18', 1),
+(4, 3, '2024-12-25', '2024-12-30', 'Maternity leave', 'Rejected', '2024-07-18', 5, NULL, 1),
+(5, 4, '2024-12-26', '2024-12-31', 'Paternity leave', 'Submitted', '2024-07-19', 6, NULL, 1),
+(6, 5, '2024-12-27', '2024-12-31', 'Unpaid leave', 'Viewed by Lead', '2024-07-20', 7, NULL, 1),
+(7, 1, '2024-12-28', '2024-12-31', 'Annual vacation', 'Approved by Lead', '2024-07-21', 1, '2024-07-22', 1),
+(1, 2, '2025-01-01', '2025-01-07', 'Medical issue', 'Viewed by HR', '2024-07-22', 2, NULL, 1),
+(2, 3, '2025-01-10', '2025-01-15', 'Maternity leave', 'Approved by HR', '2024-07-23', 3, '2024-07-24', 1),
+(3, 4, '2025-01-15', '2025-01-20', 'Paternity leave', 'Rejected', '2024-07-24', 4, NULL, 1),
+(4, 5, '2025-01-20', '2025-01-25', 'Unpaid leave', 'Submitted', '2024-07-25', 5, NULL, 1),
+(5, 1, '2025-01-25', '2025-01-31', 'Annual vacation', 'Viewed by Lead', '2024-07-26', 6, NULL, 1),
+(6, 2, '2025-02-01', '2025-02-07', 'Medical issue', 'Approved by Lead', '2024-07-27', 7, '2024-07-28', 1),
+(7, 3, '2025-02-05', '2025-02-15', 'Maternity leave', 'Viewed by HR', '2024-07-28', 1, NULL, 1),
+(8, 1, '2024-08-01', '2024-08-05', 'Family vacation', 'Approved by Lead', '2024-07-25', 2, '2024-07-26', 1),
+(9, 2, '2024-08-10', '2024-08-15', 'Medical leave', 'Approved by HR', '2024-07-30', 3, '2024-08-01', 1),
+(10, 3, '2024-09-01', '2024-09-10', 'Training', 'Submitted', '2024-07-31', NULL, NULL, 1),
+(11, 4, '2024-10-01', '2024-10-05', 'Conference', 'Viewed by Lead', '2024-08-01', 5, NULL, 1),
+(12, 5, '2024-11-01', '2024-11-03', 'Family emergency', 'Rejected', '2024-08-10', 6, '2024-08-11', 1),
+(13, 1, '2024-12-01', '2024-12-05', 'Vacation', 'Approved by HR', '2024-08-15', 2, '2024-08-16', 1),
+(14, 2, '2024-09-20', '2024-09-22', 'Doctor appointment', 'Approved by Lead', '2024-08-20', 1, '2024-08-21', 1),
+(15, 3, '2024-10-20', '2024-10-25', 'Study leave', 'Submitted', '2024-08-25', NULL, NULL, 1),
+(16, 4, '2024-11-20', '2024-11-25', 'Project work', 'Viewed by HR', '2024-08-30', 3, NULL, 1),
+(17, 5, '2024-12-10', '2024-12-15', 'Personal reasons', 'Approved by Lead', '2024-09-01', 4, '2024-09-02', 1);
+
+
+-- Select all data from Departments
+SELECT * FROM Departments;
+
+-- Select all data from Positions
+SELECT * FROM Positions;
+
+-- Select all data from Employees
+SELECT * FROM Employees;
+
+-- Select all data from Employee_positions
+SELECT * FROM Employee_positions;
+
+-- Select all data from Roles
+SELECT * FROM Roles;
+
+-- Select all data from EmployeeRoles
+SELECT * FROM EmployeeRoles;
+
+-- Select all data from EmployeeDetails
+SELECT * FROM EmployeeDetails;
+
+-- Select all data from LeaveTypes
+SELECT * FROM LeaveTypes;
+
+-- Select all data from LeaveRequests
+SELECT * FROM LeaveRequests;
