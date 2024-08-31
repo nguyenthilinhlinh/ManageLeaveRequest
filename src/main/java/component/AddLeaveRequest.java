@@ -589,7 +589,7 @@ public class AddLeaveRequest extends JPanel {
 			noti = new Notification();
 			noti.setLeaveRequestID(leaveRequestID);
 			noti.setMessage("abc");
-			noti.setReceiverID(lr.getApproverId());
+			noti.setReceiverID(empReceiver.getEmployeeID());
 			var notification = notificationDao.insertNotification(noti);
 			if (notification > 0) {
                 JOptionPane.showMessageDialog(null, "Notification successfully inserted.");
