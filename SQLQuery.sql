@@ -971,3 +971,114 @@ SELECT * FROM LeaveTypes;
 
 -- Select all data from LeaveRequests
 SELECT * FROM LeaveRequests;
+
+
+-- utility
+
+create or alter PROCEDURE usp_InsertEmployee
+	@fullName varchar(100),
+	@email varchar(100),
+	@password nvarchar(255),
+	@positionName varchar(100),
+	@departmentName varchar(100),
+	@roleName varchar(50),
+
+	@address varchar(255),
+	@phoneNumber varchar(15),
+	@dob date,
+	@gender varchar(10),
+
+
+	@newEmployeeID INT OUTPUT
+AS
+BEGIN
+
+	IF EXISTS (SELECT 1 FROM Employees e WHERE e.Email = @email)
+		BEGIN
+			return -1;
+		END
+	ELSE
+		BEGIN
+
+			DECLARE @FoundRoleID INT;
+			DECLARE @FoundDepartmentID INT;
+			DECLARE @FoundPositionID INT;
+
+
+
+			-- Validate existing roles
+			SELECT @FoundRoleID = r.RoleID
+			FROM Roles r WHERE r.RoleName = @roleName;
+			IF @FoundRoleID IS NULL
+			BEGIN
+				PRINT '@roleName ' + @roleName + ' not found!';
+				return -1;
+			END
+
+			-- Validate existing departments
+			SELECT @FoundDepartmentID = d.DepartmentID
+			FROM Departments d WHERE d.DepartmentName = @departmentName;
+			IF @FoundDepartmentID IS NULL
+			BEGIN
+				PRINT '@departmentName ' + @departmentName + ' not found!';
+				return -1;
+			END
+
+			-- Validate existings position
+			SELECT @FoundPositionID = p.PositionID
+			FROM Positions p  WHERE p.PositionName = @positionName and p.DepartmentID = @FoundDepartmentID;
+			IF @FoundPositionID IS NULL
+			BEGIN
+				PRINT '@positionName ' + @positionName + ' not found!';
+				return -1;
+			END
+
+			BEGIN TRY
+				BEGIN TRANSACTION;
+
+				INSERT INTO Employees (FullName, Email, Password, Status)
+				VALUES(@fullName, @email, @password, 1);
+				SET @newEmployeeID = SCOPE_IDENTITY();
+
+				INSERT INTO EmployeeRoles (EmployeeID, RoleID)
+				VALUES(@newEmployeeID, @FoundRoleID);
+
+				INSERT INTO Employee_positions (EmployeeID, PositionID)
+				VALUES(@newEmployeeID, @FoundPositionID);
+
+				INSERT INTO EmployeeDetails (EmployeeID, PhoneNumber, Address, DateOfBirth, Gender)
+				VALUES (@newEmployeeID, @phoneNumber, @address, @dob, @gender);
+
+				COMMIT TRANSACTION;
+			END TRY
+			BEGIN CATCH
+		       ROLLBACK TRANSACTION;
+		       PRINT ERROR_MESSAGE();
+		       return -1;
+			END CATCH
+
+		END
+
+END;
+
+
+BEGIN
+	DECLARE @newEmployeeID int;
+	DECLARE @returnCode int;
+	EXEC @returnCode = usp_InsertEmployee
+	    @fullName = 'Nguyen Thuy Huy',
+	    @Email = 'huy.nguyen@gmail.com',
+	    @password = 'password123',
+	    @positionName = 'DevOps Engineer',
+	    @departmentName = 'Operations',
+	    @roleName = 'User',
+	    @address = '2 Tran Khanh Du',
+	    @phoneNumber = '0938648184',
+	    @dob = '1997-05-10',
+	    @gender = 'Male',
+	    @newEmployeeID = @newEmployeeID OUTPUT;
+
+	PRINT '@returnCode = ' + CAST(@returnCode as VARCHAR);
+
+	PRINT 'EMPLOYEE ID = ' + CAST(@newEmployeeID as VARCHAR);
+END;
