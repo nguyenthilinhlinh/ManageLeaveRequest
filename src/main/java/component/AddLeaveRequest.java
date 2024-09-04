@@ -256,7 +256,7 @@ public class AddLeaveRequest extends JPanel {
 			empReceiver = daoEmp.selectEmpbyRoleName("Admin");
 			JOptionPane.showMessageDialog(null, empReceiver.getEmployeeName());
 			cmbApprover.addItem(empReceiver.getEmployeeName());
-			statusLR = "Approved by Lead";
+			statusLR = "Submitted";
 		}
 		}
 
@@ -303,7 +303,7 @@ public class AddLeaveRequest extends JPanel {
 			empReceiver = daoEmp.selectEmpbyRoleName("Admin");
 			JOptionPane.showMessageDialog(null, empReceiver.getEmployeeName());
 			cmbApprover.addItem(empReceiver.getEmployeeName());
-			statusLR = "Approved by Lead";
+			statusLR = "Submitted";
 		}
 		}
 		empOldReceiver = daoEmp.getEmp(lr.getApproverId());
@@ -376,34 +376,13 @@ public class AddLeaveRequest extends JPanel {
 
 		var selectedStartDate = startDateChooser.getDate();
 
-		if (!selectedEndDate.equals(oldLR.getEndDate()) || !selectedStartDate.equals(oldLR.getStartDate())) {
-			if (duplicateCheckForEdit(selectedStartDate, selectedEndDate)) {
-				JOptionPane.showMessageDialog(null, "Ngày bắt đầu nghỉ của bạn bị trùng với số ngày nghỉ của đơn cũ ");
-				return;
-			}
-			;
-		}
-
-		Date currentDate = new Date();
-
-		// Check if the start date is in the past
-		if (selectedStartDate.before(currentDate)) {
-			JOptionPane.showMessageDialog(this, "Start date cannot be in the past.", "Invalid Start Date",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		// Check if end date is before start date
-		if (selectedEndDate.before(selectedStartDate)) {
-			JOptionPane.showMessageDialog(this, "End date cannot be before the start date.", "Invalid End Date",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+		isDateValid(selectedStartDate, selectedEndDate);
 
 		// Calculate the difference in milliseconds between start date and end date
 		long diffInMillies = selectedEndDate.getTime() - selectedStartDate.getTime();
 		long diffInDays = diffInMillies / (1000 * 60 * 60 * 24);
 
+		
 //	    // Check if the difference is more than 7 days
 //	    if (diffInDays > 7) {
 //	        JOptionPane.showMessageDialog(this, "The leave period cannot be more than 7 days.", "Invalid Date Range", JOptionPane.ERROR_MESSAGE);
@@ -483,39 +462,14 @@ public class AddLeaveRequest extends JPanel {
 	protected void btnSubmitActionPerformed(ActionEvent e) {
 		Date selectedEndDate = endDateChooser.getDate();
 		Date selectedStartDate = startDateChooser.getDate();
-		if (selectedStartDate == null || selectedEndDate == null) {
-			JOptionPane.showMessageDialog(null, "vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc");
-			return;
-		}
-
-		Date currentDate = new Date();
-
-		// Check if the start date is in the past
-		if (selectedStartDate.before(currentDate)) {
-			JOptionPane.showMessageDialog(this, "Start date cannot be in the past.", "Invalid Start Date",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		// Check if end date is before start date
-		if (selectedEndDate.before(selectedStartDate)) {
-			JOptionPane.showMessageDialog(this, "End date cannot be before the start date.", "Invalid End Date",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		if (duplicateCheck(selectedStartDate, selectedEndDate)) {
-			JOptionPane.showMessageDialog(null, "Ngày bắt đầu nghỉ của bạn bị trùng với số ngày nghỉ của đơn cũ ");
-			return;
-		}
-		;
+		isDateValid(selectedStartDate, selectedEndDate);
 
 		// Check leave Type
 
 		// Calculate the difference in milliseconds between start date and end date
 		long diffInMillies = selectedEndDate.getTime() - selectedStartDate.getTime();
 		long diffInDays = diffInMillies / (1000 * 60 * 60 * 24);
-
+		
 		var lD = new LeaveDocument();
 		var lr = new LeaveRequests();
 //	    if(oldLT.getLeaveTypeName().equals(cmbLeaveType.getSelectedItem().toString())) {
@@ -584,6 +538,12 @@ public class AddLeaveRequest extends JPanel {
 			va.getJformEdit().setVisible(false);
 			va.showleaveRequest();
 			
+			// Determine the receiver of the notification
+//	        if (r.getRoleName().equals("Leader")) {
+//	            // If the user is a Leader, send the request to Admin
+//	            empReceiver = daoEmp.selectEmpbyRoleName("Admin");
+//	        }
+
             var noti = new Notification();
 			var notificationDao = new NotificationDao();
 			noti = new Notification();
@@ -598,6 +558,30 @@ public class AddLeaveRequest extends JPanel {
             }
 			
 		}
+	}
+	private boolean isDateValid(Date startDate, Date endDate) {
+	    if (startDate == null || endDate == null) {
+	        JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc");
+	        return false;
+	    }
+
+	    Date currentDate = new Date();
+	    if (startDate.before(currentDate)) {
+	        JOptionPane.showMessageDialog(this, "Start date cannot be in the past.", "Invalid Start Date", JOptionPane.ERROR_MESSAGE);
+	        return false;
+	    }
+
+	    if (endDate.before(startDate)) {
+	        JOptionPane.showMessageDialog(this, "End date cannot be before the start date.", "Invalid End Date", JOptionPane.ERROR_MESSAGE);
+	        return false;
+	    }
+
+	    if (duplicateCheck(startDate, endDate)) {
+	        JOptionPane.showMessageDialog(null, "Ngày bắt đầu nghỉ của bạn bị trùng với số ngày nghỉ của đơn cũ ");
+	        return false;
+	    }
+
+	    return true;
 	}
 
 	public static long getNumberOfLeaveDays(Date startDate, Date endDate) {

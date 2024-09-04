@@ -217,9 +217,10 @@ public class PendingApproval extends JPanel {
 		var daoLT = new LeaveTypeDao();
 		var dao = new LeaveRequestDao();
 		var daoEmp = new EmployeeDao();
-		
+
 		totalRow = dao.countLRForLeader(user.getEmployeeID(), role); // lay tong so dong
 		totalPage = Math.ceil(totalRow.doubleValue() / rowOfPage.doubleValue()); // tinh so trang
+		
 		dao.selLRequestForLeader(1, rowOfPage, user.getEmployeeID(), role).stream().forEach(lr -> {
 		employee = daoEmp.getEmp(lr.getEmployeeId());
 				if (employee.getEmployeeID() != user.getEmployeeID()) {
@@ -281,7 +282,7 @@ public class PendingApproval extends JPanel {
 					processingLeaveRequestFrame = new JFrame("Processing Leave Request");
 					processingLeaveRequestFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					processingLeaveRequestFrame.getContentPane().add(form);
-					processingLeaveRequestFrame.setSize(390, 300); // Set the width and height of the frame
+					processingLeaveRequestFrame.setSize(580, 300); // Set the width and height of the frame
 					processingLeaveRequestFrame.setResizable(false); // Disable resizing
 					processingLeaveRequestFrame.setLocationRelativeTo(null);
 					processingLeaveRequestFrame.setVisible(true);

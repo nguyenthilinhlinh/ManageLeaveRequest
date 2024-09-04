@@ -11,32 +11,30 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Date;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 import java.awt.event.ActionEvent;
 import com.toedter.calendar.JCalendar;
 
 import dao.EmployeeDao;
-import dao.LeaveRequestDao;
 import entity.Employees;
 import entity.Role;
-import helper.RegexConst;
-import helper.Valid;
 import component.Processed;
 import component.PendingApproval;
-import java.awt.event.MouseAdapter;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.AncestorEvent;
 import component.AddLeaveRequest;
 import component.VacationRequest;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import component.LeaveTypes;
 import component.NotificationPanel;
 import component.ProfileEmployee;
 import component.Static;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.AncestorEvent;
 
 public class JFrameMain extends JFrame {
 
@@ -56,10 +54,8 @@ public class JFrameMain extends JFrame {
 	private JTabbedPane tabbedPaneApproval;
 	private JPanel panelPending;
 	private JPanel panelProcessed;
-	private JPanel panel;
 	private JTextField txtEmail;
 	private JPasswordField txtPassword;
-	private JLabel lblNewLabel_1;
 	private JLabel lblNameEmployeeLogin;
 	private JCheckBox chkRememberMe;
 	private Employees emp = null;
@@ -73,7 +69,7 @@ public class JFrameMain extends JFrame {
 	private JButton btnLeavetypes;
 	private JPanel panelLeaveTypes;
 	private LeaveTypes leaveTypes;
-	private JLabel lblNewLabel;
+	private JLabel lblbell;
 	private JButton btnLogout;
 	private JButton btnProfileEmployee;
 	private JPanel panelProfileEmployee;
@@ -83,6 +79,10 @@ public class JFrameMain extends JFrame {
 	private Static static1;
 	private JPanel panelVactionRequest;
 	private NotificationPanel notificationPanel;
+	private JLabel lblBellIcon;
+	private JLabel lblSignout;
+	private JButton btnUserData;
+	private JLabel lblUser;
 
 	/**
 	 * Launch the application.
@@ -120,418 +120,397 @@ public class JFrameMain extends JFrame {
 
 		setContentPane(contentPaneCard);
 		contentPaneCard.setLayout(new CardLayout(0, 0));
-
-		panelLogin = new JPanel();
-//		Color panelyellow = Color.decode("#F6FB7A");
-		Color panelyellow = Color.decode("#F3CA52");
-//		Color panelgreen = Color.decode("#B4E380");
-		Color panelgreen = Color.decode("#7ABA78");
-		Color panelgrey = Color.decode("#686D76");
-		panelLogin.setBackground(new Color(243, 202, 82));
-		contentPaneCard.add(panelLogin, "Login");
-		panelLogin.setLayout(null);
-
-		panel = new JPanel();
-		panel.setBackground(panelgreen);
-		panel.setBounds(179, 93, 857, 555);
-		panelLogin.add(panel);
-		JLabel lblEmail = new JLabel("Email:");
-		lblEmail.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblEmail.setBounds(194, 128, 88, 35);
-		panel.add(lblEmail);
-
-		txtEmail = new JTextField();
-		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		txtEmail.setBounds(321, 127, 344, 39);
-		panel.add(txtEmail);
-		txtEmail.setColumns(10);
-
-		JLabel lblPassword = new JLabel("Password:");
-		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblPassword.setBounds(194, 204, 112, 35);
-		panel.add(lblPassword);
-
-		txtPassword = new JPasswordField();
-		txtPassword.setBounds(321, 205, 344, 39);
-		panel.add(txtPassword);
-
-		txtPassword.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					checkLogin();
-				}
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-		});
-
-		chkRememberMe = new JCheckBox("Remember Me");
-		Color panelgreenf = Color.decode("#73BBA3");
-		chkRememberMe.setBackground(panelgreenf);
-		chkRememberMe.setFont(new Font("Tahoma", Font.BOLD, 11));
-		chkRememberMe.setBounds(341, 288, 129, 25);
-		panel.add(chkRememberMe);
-
-		JSeparator separator = new JSeparator();
-		separator.setBounds(321, 271, 344, 2);
-		panel.add(separator);
-
-		JButton btnLogin = new JButton("Login");
-		btnLogin.setBackground(new Color(0, 255, 0));
-		btnLogin.setForeground(Color.BLACK);
-		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnLogin.setBounds(341, 336, 128, 35);
-		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-		panel.add(btnLogin);
-
-		JButton btnReset = new JButton("Reset");
-		btnReset.setBackground(new Color(76, 175, 80));
-		btnReset.setForeground(Color.BLACK);
-		btnReset.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnReset.setBounds(516, 336, 128, 35);
-		btnReset.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-		panel.add(btnReset);
-		panel.setLayout(null);
-		panel.add(lblEmail);
-		panel.add(txtEmail);
-		panel.add(lblPassword);
-		panel.add(txtPassword);
-		panel.add(chkRememberMe);
-		panel.add(separator);
-		panel.add(btnLogin);
-		panel.add(btnReset);
-
-		lblNewLabel_1 = new JLabel("Login");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 42));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(10, 21, 837, 59);
-		panel.add(lblNewLabel_1);
-
-		panelMain = new JPanel();
-		contentPaneCard.add(panelMain, "Main");
-		panelMain.setLayout(new BorderLayout(0, 0));
-
-		penalSiledbar = new JPanel();
-		penalSiledbar.setBackground(panelgrey);
-		panelMain.add(penalSiledbar, BorderLayout.WEST);
-		Color colorbutton = Color.decode("#88D66C");
-		btnStatistics = new JButton("Statistics");
-		btnStatistics.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnStatistics.setMnemonic('S');
-		btnStatistics.setBackground(colorbutton);
-		btnStatistics.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-
-		btnApproval = new JButton("Approval");
-		btnApproval.setVisible(false);
-		btnApproval.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnApproval.setMnemonic('A');
-		btnApproval.setBackground(new Color(136, 214, 108));
-		btnApproval.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-
-		btnVacation = new JButton("Vacation");
-		btnVacation.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnVacation.setMnemonic('V');
-		btnVacation.setBackground(colorbutton);
-		btnVacation.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-
-		btnLeavetypes = new JButton("LeaveTypes");
-		btnLeavetypes.setVisible(false);
-		btnLeavetypes.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnLeavetypes.setMnemonic('L');
-		btnLeavetypes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-		
+		initLoginPanel();
+		initMainPanel();
+		 initSidebar();
+	        initNavbar(); 
         loadSavedLoginDetails();
-		btnLeavetypes.setBackground(new Color(136, 214, 108));
-		
-		btnLogout = new JButton("Logout");
-		btnLogout.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnLogout.setMnemonic('L');
-		btnLogout.setBackground(new Color(136, 214, 108));
-		btnLogout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				checkEventButton(e);
-			}
-		});
-		
-		btnProfileEmployee = new JButton("ProfileEmployee");
-		btnProfileEmployee.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnProfileEmployee.setMnemonic('P');
-		btnProfileEmployee.setBackground(new Color(136, 214, 108));
-		btnProfileEmployee.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        checkEventButton(e);
-		    }
-		});
-		
-		
-		GroupLayout gl_penalSiledbar = new GroupLayout(penalSiledbar);
-		gl_penalSiledbar.setHorizontalGroup(
-			gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_penalSiledbar.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnStatistics, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-						.addComponent(btnApproval, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-						.addComponent(btnLeavetypes, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-						.addComponent(btnVacation, GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-						.addComponent(btnProfileEmployee, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnLogout, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
-					.addContainerGap())
-		);
-		gl_penalSiledbar.setVerticalGroup(
-			gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_penalSiledbar.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(btnProfileEmployee, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnStatistics, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnApproval, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnLeavetypes, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnVacation, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnLogout, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(380, Short.MAX_VALUE))
-		);
-		penalSiledbar.setLayout(gl_penalSiledbar);
-
-		panelNarbar = new JPanel();
-		panelMain.add(panelNarbar, BorderLayout.NORTH);
-
-		lblNameEmployeeLogin = new JLabel("");
-		lblNameEmployeeLogin.setFont(new Font("Tahoma", Font.PLAIN, 24));
-		lblNameEmployeeLogin.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		lblNewLabel = new JLabel("Thông Báo");
-
-		
-		lblNewLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
- 
-                
-				notificationPanel.setVisible(true);
-            }
-		});
-		lblNewLabel.setBackground(new Color(255, 255, 0));
-		GroupLayout gl_panelNarbar = new GroupLayout(panelNarbar);
-		gl_panelNarbar.setHorizontalGroup(
-			gl_panelNarbar.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelNarbar.createSequentialGroup()
-					.addGap(76)
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
-					.addGap(275)
-					.addComponent(lblNameEmployeeLogin, GroupLayout.PREFERRED_SIZE, 471, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(349, Short.MAX_VALUE))
-		);
-		gl_panelNarbar.setVerticalGroup(
-			gl_panelNarbar.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelNarbar.createSequentialGroup()
-					.addGroup(gl_panelNarbar.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNameEmployeeLogin, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
-						.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
-					.addContainerGap())
-		);
-		panelNarbar.setLayout(gl_panelNarbar);
-
-		panelSubCard = new JPanel();
-		panelMain.add(panelSubCard, BorderLayout.CENTER);
-		panelSubCard.setLayout(new CardLayout(0, 0));
-
-		panelStatistics = new JPanel();
-		panelStatistics.setBackground(new Color(243, 202, 82));
-		panelSubCard.add(panelStatistics, "Statistics");
-		panelStatistics.setLayout(null);
-		
-		static1 = new Static();
-		static1.setBounds(10, 11, 1043, 649);
-		panelStatistics.add(static1);
-
-		panelApproval = new JPanel();
-		panelApproval.setBackground(panelyellow);
-		panelSubCard.add(panelApproval, "Approval");
-		panelApproval.setLayout(null);
-
-		tabbedPaneApproval = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPaneApproval.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		tabbedPaneApproval.setBounds(32, 11, 1001, 625);
-		panelApproval.add(tabbedPaneApproval);
-
-//		pendingApproval = new PendingApproval();
-//		pendingApproval.setBounds(10, 11, 976, 577);
-//		panelPending.add(pendingApproval);
-		panelProcessed = new JPanel();
-		panelProcessed.setBackground(new Color(191, 246, 195));
-		tabbedPaneApproval.addTab("Processed", null, panelProcessed, null);
-		
-		panelProcessed.setLayout(null);
-
-		panelPending = new JPanel();
-		panelPending.setBackground(new Color(191, 246, 195));
-
-		tabbedPaneApproval.addTab("Pending Approval", null, panelPending, null);
-		panelPending.setLayout(new CardLayout(0, 0));
-
-//		processed = new Processed();
-//		processed.setBounds(10, 11, 983, 581);
-//		panelProcessed.add(processed);
-
-		panelVacation = new JPanel();
-		panelVacation.setBackground(new Color(243, 202, 82));
-		panelSubCard.add(panelVacation, "Vacation");
-		panelVacation.setLayout(null);
-		
-		panelVactionRequest = new JPanel();
-		panelVactionRequest.setLayout(null);
-		panelVactionRequest.setBackground(new Color(191, 246, 195));
-		panelVactionRequest.setBounds(0, 0, 1055, 671);
-		panelVacation.add(panelVactionRequest);
-
-		panelLeaveTypes = new JPanel();
-		panelLeaveTypes.setBackground(new Color(243, 202, 82));
-		panelSubCard.add(panelLeaveTypes, "LeaveTypes");
-		panelLeaveTypes.setLayout(null);
-
-		leaveTypes = new LeaveTypes();
-		leaveTypes.setBounds(10, 11, 1043, 649);
-		panelLeaveTypes.add(leaveTypes);
-		
-		panelProfileEmployee = new JPanel();
-		panelProfileEmployee.setBackground(new Color(243, 202, 82));
-		panelSubCard.add(panelProfileEmployee, "ProfileEmployee");
-		panelProfileEmployee.setLayout(null);
-		
-		tabbedPaneApproval.addChangeListener((ChangeListener) new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int selectedIndex = tabbedPaneApproval.getSelectedIndex();
-                if (selectedIndex == 0) {
-                	loadProcesedData();
-                } else if (selectedIndex == 1) {
-                	loadPendingData();
-                }
-            }
-        });
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/a.png")));
+        setIconImage(icon.getImage());
 
 	}
+	 private void initLoginPanel() {
+	        panelLogin = new JPanel();
+	        panelLogin.setBackground(new Color(243, 202, 82));
+	        contentPaneCard.add(panelLogin, "Login");
+	        panelLogin.setLayout(null);
 
-	private void highlightButton(JButton button) {
+	        JPanel panel = new JPanel();
+	        panel.setBackground(new Color(122, 186, 120));
+	        panel.setBounds(179, 93, 857, 555);
+	        panelLogin.add(panel);
+	        panel.setLayout(null);
 
-	    resetButtonColors();
+	        JLabel lblEmail = new JLabel("Email:");
+	        lblEmail.setFont(new Font("Tahoma", Font.BOLD, 18));
+	        lblEmail.setBounds(194, 128, 88, 35);
+	        panel.add(lblEmail);
 
-	    button.setBackground(Color.decode("#6cd685"));
-	}
+	        txtEmail = new JTextField();
+	        txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 18));
+	        txtEmail.setBounds(321, 127, 344, 39);
+	        panel.add(txtEmail);
+	        txtEmail.setColumns(10);
+
+	        JLabel lblPassword = new JLabel("Password:");
+	        lblPassword.setFont(new Font("Tahoma", Font.BOLD, 18));
+	        lblPassword.setBounds(194, 204, 112, 35);
+	        panel.add(lblPassword);
+
+	        txtPassword = new JPasswordField();
+	        txtPassword.setBounds(321, 205, 344, 39);
+	        panel.add(txtPassword);
+
+	        txtPassword.addKeyListener(new KeyListener() {
+	            @Override
+	            public void keyTyped(KeyEvent e) {}
+
+	            @Override
+	            public void keyPressed(KeyEvent e) {
+	                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+	                    checkLogin();
+	                }
+	            }
+
+	            @Override
+	            public void keyReleased(KeyEvent e) {}
+	        });
+
+	        chkRememberMe = new JCheckBox("Remember Me");
+	        chkRememberMe.setBackground(new Color(115, 187, 163));
+	        chkRememberMe.setFont(new Font("Tahoma", Font.BOLD, 11));
+	        chkRememberMe.setBounds(341, 288, 129, 25);
+	        panel.add(chkRememberMe);
+
+	        JSeparator separator = new JSeparator();
+	        separator.setBounds(321, 271, 344, 2);
+	        panel.add(separator);
+
+	        JButton btnLogin = new JButton("Login");
+	        btnLogin.setBackground(new Color(0, 255, 0));
+	        btnLogin.setForeground(Color.BLACK);
+	        btnLogin.setFont(new Font("Tahoma", Font.BOLD, 18));
+	        btnLogin.setBounds(341, 336, 128, 35);
+	        btnLogin.addActionListener(this::checkEventButton);
+	        panel.add(btnLogin);
+
+	        JButton btnReset = new JButton("Reset");
+	        btnReset.setBackground(new Color(76, 175, 80));
+	        btnReset.setForeground(Color.BLACK);
+	        btnReset.setFont(new Font("Tahoma", Font.BOLD, 18));
+	        btnReset.setBounds(516, 336, 128, 35);
+	        btnReset.addActionListener(this::checkEventButton);
+	        panel.add(btnReset);
+
+	        JLabel lblLoginTitle = new JLabel("Login");
+	        lblLoginTitle.setFont(new Font("Tahoma", Font.BOLD, 42));
+	        lblLoginTitle.setHorizontalAlignment(SwingConstants.CENTER);
+	        lblLoginTitle.setBounds(10, 21, 837, 59);
+	        panel.add(lblLoginTitle);
+	    }
+	 private void initMainPanel() {
+	        panelMain = new JPanel();
+	        contentPaneCard.add(panelMain, "Main");
+	        panelMain.setLayout(new BorderLayout(0, 0));
+
+	        penalSiledbar = new JPanel();
+	        penalSiledbar.setBackground(new Color(104, 109, 118));
+	        panelMain.add(penalSiledbar, BorderLayout.WEST);
+	        initSidebar();
+
+	        panelNarbar = new JPanel();
+	        panelMain.add(panelNarbar, BorderLayout.NORTH);
+	        
+	        
+	        panelSubCard = new JPanel();
+	        panelMain.add(panelSubCard, BorderLayout.CENTER);
+	        panelSubCard.setLayout(new CardLayout(0, 0));
+
+	        initSubPanels();
+	    }
+	 private void initNavbar() {
+		 lblNameEmployeeLogin = new JLabel("");
+			lblNameEmployeeLogin.setFont(new Font("Tahoma", Font.PLAIN, 19));
+			lblNameEmployeeLogin.setHorizontalAlignment(SwingConstants.LEFT);
+			 ImageIcon iconbell = new ImageIcon(Objects.requireNonNull(JFrameMain.class.getResource("/asset/image/bell.png")));
+			 Image resizedImage = iconbell.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); 
+			 ImageIcon resizedIcon = new ImageIcon(resizedImage);
+		        // Create a JLabel bell
+			lblbell = new JLabel();
+			lblbell.setIcon(resizedIcon);
+			
+			lblbell.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+
+	 
+	                
+					notificationPanel.setVisible(true);
+	            }
+			});
+			lblbell.setBackground(new Color(255, 255, 0));
+			
+			lblUser = new JLabel();
+			lblUser.setBackground(Color.YELLOW);
+			ImageIcon iconuser = new ImageIcon(Objects.requireNonNull(JFrameMain.class.getResource("/asset/image/user.png")));
+			 Image resizedImageuser = iconuser.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH); 
+			 ImageIcon resizedIconuser = new ImageIcon(resizedImageuser);
+			 lblUser.setIcon(resizedIconuser);
+			
+			
+			
+			GroupLayout gl_panelNarbar = new GroupLayout(panelNarbar);
+			gl_panelNarbar.setHorizontalGroup(
+				gl_panelNarbar.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_panelNarbar.createSequentialGroup()
+						.addGap(27)
+						.addComponent(lblUser, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(lblNameEmployeeLogin, GroupLayout.PREFERRED_SIZE, 471, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED, 481, Short.MAX_VALUE)
+						.addComponent(lblbell, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
+						.addGap(386))
+			);
+			gl_panelNarbar.setVerticalGroup(
+				gl_panelNarbar.createParallelGroup(Alignment.TRAILING)
+					.addGroup(Alignment.LEADING, gl_panelNarbar.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(gl_panelNarbar.createParallelGroup(Alignment.LEADING)
+							.addComponent(lblbell, GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+							.addComponent(lblNameEmployeeLogin, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+							.addComponent(lblUser, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
+						.addContainerGap())
+			);
+			panelNarbar.setLayout(gl_panelNarbar);
+		}
+
+	 private void initSidebar() {
+	        Color colorbutton = Color.decode("#88D66C");
+	        btnStatistics = new JButton("Statistics");
+	        btnStatistics.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnStatistics.setMnemonic('S');
+	        btnStatistics.setBackground(colorbutton);
+	        btnStatistics.addActionListener(this::checkEventButton);
+	        ImageIcon iconstatistics = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/statistics.png")));
+	        Image resizedImagestatistics = iconstatistics.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIconstatistics = new ImageIcon(resizedImagestatistics);
+			btnStatistics.setIcon(resizedIconstatistics);
+
+	        btnApproval = new JButton("Approval");
+	        btnApproval.setVisible(false);
+	        btnApproval.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnApproval.setMnemonic('A');
+	        btnApproval.setBackground(colorbutton);
+	        btnApproval.addActionListener(this::checkEventButton);
+	        ImageIcon iconcheck = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/check.png")));
+	        Image resizedImagecheck = iconcheck.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIconcheck = new ImageIcon(resizedImagecheck);
+			btnApproval.setIcon(resizedIconcheck);
+
+	        btnVacation = new JButton("Vacation");
+	        btnVacation.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnVacation.setMnemonic('V');
+	        btnVacation.setBackground(colorbutton);
+	        btnVacation.addActionListener(this::checkEventButton);
+	        ImageIcon iconvacation = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/vacation.png")));
+			Image resizedImagevacation = iconvacation.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIconvacation = new ImageIcon(resizedImagevacation);
+			btnVacation.setIcon(resizedIconvacation);
+
+	        btnLeavetypes = new JButton("LeaveTypes");
+	        btnLeavetypes.setVisible(false);
+	        btnLeavetypes.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnLeavetypes.setMnemonic('L');
+	        btnLeavetypes.setBackground(colorbutton);
+	        btnLeavetypes.addActionListener(this::checkEventButton);
+	        ImageIcon iconleave = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/leave.png")));
+	        Image resizedImageleave = iconleave.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIconleave = new ImageIcon(resizedImageleave);
+			btnLeavetypes.setIcon(resizedIconleave);
+	        
+	        btnLogout = new JButton("Logout");
+	        ImageIcon iconcheckout = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/check-out.png")));
+	        Image resizedImage = iconcheckout.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIcon = new ImageIcon(resizedImage);
+			btnLogout.setIcon(resizedIcon);
+	        btnLogout.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnLogout.setMnemonic('L');
+	        btnLogout.setBackground(colorbutton);
+	        btnLogout.addActionListener(this::checkEventButton);
+
+	        btnProfileEmployee = new JButton("Profile");
+	        btnProfileEmployee.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnProfileEmployee.setMnemonic('P');
+	        btnProfileEmployee.setBackground(colorbutton);
+	        btnProfileEmployee.addActionListener(this::checkEventButton);
+	        ImageIcon iconprofile = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/profile.png")));
+	        Image resizedImageprofile = iconprofile.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIconprofile = new ImageIcon(resizedImageprofile);
+			btnProfileEmployee.setIcon(resizedIconprofile);
+	        
+	        lblSignout = new JLabel("Sign Out",SwingConstants.CENTER);
+	        lblSignout.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        lblSignout.setIcon(resizedIcon);
+	        
+	        btnUserData = new JButton("User Data");
+	        btnUserData.setMnemonic('U');
+	        btnUserData.setFont(new Font("Tahoma", Font.BOLD, 16));
+	        btnUserData.setBackground(new Color(136, 214, 108));
+	        ImageIcon iconpersonal = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/client.png")));
+	        Image resizedImageper = iconpersonal.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
+			ImageIcon resizedIconper = new ImageIcon(resizedImageper);
+			btnUserData.setIcon(resizedIconper);
+	    
+	        GroupLayout gl_penalSiledbar = new GroupLayout(penalSiledbar);
+	        gl_penalSiledbar.setHorizontalGroup(
+	        	gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
+	        		.addGroup(gl_penalSiledbar.createSequentialGroup()
+	        			.addGroup(gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
+	        				.addGroup(gl_penalSiledbar.createSequentialGroup()
+	        					.addContainerGap()
+	        					.addGroup(gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
+	        						.addComponent(btnVacation, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+	        						.addComponent(btnLogout, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+	        						.addComponent(btnProfileEmployee, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+	        						.addComponent(btnStatistics, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+	        						.addComponent(btnApproval, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+	        						.addComponent(btnLeavetypes, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)))
+	        				.addGroup(gl_penalSiledbar.createSequentialGroup()
+	        					.addGap(33)
+	        					.addComponent(lblSignout, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
+	        				.addGroup(gl_penalSiledbar.createSequentialGroup()
+	        					.addContainerGap()
+	        					.addComponent(btnUserData, GroupLayout.PREFERRED_SIZE, 163, GroupLayout.PREFERRED_SIZE)))
+	        			.addContainerGap())
+	        );
+	        gl_penalSiledbar.setVerticalGroup(
+	        	gl_penalSiledbar.createParallelGroup(Alignment.LEADING)
+	        		.addGroup(gl_penalSiledbar.createSequentialGroup()
+	        			.addContainerGap()
+	        			.addComponent(btnProfileEmployee)
+	        			.addGap(11)
+	        			.addComponent(btnStatistics)
+	        			.addGap(11)
+	        			.addComponent(btnApproval, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+	        			.addGap(18)
+	        			.addComponent(btnLeavetypes, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+	        			.addPreferredGap(ComponentPlacement.UNRELATED)
+	        			.addComponent(btnVacation, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+	        			.addGap(18)
+	        			.addComponent(btnUserData)
+	        			.addGap(266)
+	        			.addComponent(lblSignout)
+	        			.addPreferredGap(ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+	        			.addComponent(btnLogout, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+	        			.addGap(27))
+	        );
+	        penalSiledbar.setLayout(gl_penalSiledbar);
+	    }
+	 private void initSubPanels() {
+	        panelStatistics = new JPanel();
+	        panelStatistics.setBackground(new Color(243, 202, 82));
+	        panelSubCard.add(panelStatistics, "Statistics");
+	        panelStatistics.setLayout(null);
+
+	        static1 = new Static();
+	        static1.setBounds(10, 11, 1043, 649);
+	        panelStatistics.add(static1);
+
+	        panelApproval = new JPanel();
+	        panelApproval.setBackground(new Color(243, 202, 82));
+	        panelSubCard.add(panelApproval, "Approval");
+	        panelApproval.setLayout(null);
+
+	        tabbedPaneApproval = new JTabbedPane(JTabbedPane.TOP);
+	        tabbedPaneApproval.setFont(new Font("Tahoma", Font.PLAIN, 16));
+	        tabbedPaneApproval.setBounds(32, 11, 1001, 625);
+	        panelApproval.add(tabbedPaneApproval);
+
+	        panelProcessed = new JPanel();
+	        panelProcessed.setBackground(new Color(191, 246, 195));
+	        tabbedPaneApproval.addTab("Processed", null, panelProcessed, null);
+	        panelProcessed.setLayout(null);
+
+	        panelPending = new JPanel();
+	        panelPending.setBackground(new Color(191, 246, 195));
+	        tabbedPaneApproval.addTab("Pending Approval", null, panelPending, null);
+	        panelPending.setLayout(new CardLayout(0, 0));
+
+	        tabbedPaneApproval.addChangeListener(e -> {
+	            int selectedIndex = tabbedPaneApproval.getSelectedIndex();
+	            if (selectedIndex == 0) {
+	            	loadProcesedData();
+	            } else if (selectedIndex == 1) {
+	                loadPendingData();
+	            }
+	        });
+
+	        panelVacation = new JPanel();
+	        panelVacation.setBackground(new Color(243, 202, 82));
+	        panelSubCard.add(panelVacation, "Vacation");
+	        panelVacation.setLayout(null);
+
+	        panelVactionRequest = new JPanel();
+	        panelVactionRequest.setLayout(null);
+	        panelVactionRequest.setBackground(new Color(191, 246, 195));
+	        panelVactionRequest.setBounds(0, 0, 1055, 671);
+	        panelVacation.add(panelVactionRequest);
+
+	        panelLeaveTypes = new JPanel();
+	        panelLeaveTypes.setBackground(new Color(243, 202, 82));
+	        panelSubCard.add(panelLeaveTypes, "LeaveTypes");
+	        panelLeaveTypes.setLayout(null);
+
+	        leaveTypes = new LeaveTypes();
+	        leaveTypes.setBounds(10, 11, 1043, 649);
+	        panelLeaveTypes.add(leaveTypes);
+
+	        panelProfileEmployee = new JPanel();
+	        panelProfileEmployee.setBackground(new Color(243, 202, 82));
+	        panelSubCard.add(panelProfileEmployee, "ProfileEmployee");
+	        panelProfileEmployee.setLayout(null);
+	    }
+	 private void checkEventButton(ActionEvent e) {
+	        String actionCommand = e.getActionCommand();
+	        switch (actionCommand) {
+	            case "Statistics" -> showCard("Statistics", btnStatistics);
+	            case "Approval" -> {
+	                showCard("Approval", btnApproval);
+	                loadProcesedData();
+	                loadPendingData();
+	            }
+	            case "Vacation" -> {
+	                showCard("Vacation", btnVacation);
+	                loadVacationRequestsData();
+	            }
+	            case "LeaveTypes" -> showCard("LeaveTypes", btnLeavetypes);
+	            case "ProfileEmployee" -> showCard("ProfileEmployee", btnProfileEmployee);
+	            case "Logout" -> logout();
+	            case "Login" -> checkLogin();
+	            case "Reset" -> reset();
+	        }
+	    }
+	 private void showCard(String cardName, JButton button) {
+	        highlightButton(button);
+	        CardLayout cardLayout = (CardLayout) panelSubCard.getLayout();
+	        cardLayout.show(panelSubCard, cardName);
+	    }
+	 
+	 private void highlightButton(JButton button) {
+	        resetButtonColors();
+	        button.setBackground(Color.decode("#6cd685"));
+	    }
 
 	private void resetButtonColors() {
 	    Color defaultColor = Color.decode("#88D66C");
-
 	    btnStatistics.setBackground(defaultColor);
 	    btnApproval.setBackground(defaultColor);
 	    btnVacation.setBackground(defaultColor);
 	    btnLeavetypes.setBackground(defaultColor);
 	    btnLogout.setBackground(defaultColor);
 	    btnProfileEmployee.setBackground(defaultColor);
-	}
-
-	protected void checkEventButton(ActionEvent e) {
-	    String actionCommand = e.getActionCommand();
-	    switch (actionCommand) {
-	        case "Statistics" -> {
-	            highlightButton(btnStatistics);
-	            var cardLayout = (CardLayout) panelSubCard.getLayout();
-	            cardLayout.show(panelSubCard, "Statistics");
-	        }
-
-	        case "Approval" -> {
-	            highlightButton(btnApproval);
-	            var cardLayout = (CardLayout) panelSubCard.getLayout();
-	            cardLayout.show(panelSubCard, "Approval");
-	            processed = new Processed(emp, role);
-	            processed.setBounds(10, 11, 983, 581);
-	            panelProcessed.add(processed);
-
-	            pendingApproval = new PendingApproval(emp, role);
-	            pendingApproval.setBounds(10, 11, 976, 577);
-	            panelPending.add(pendingApproval);
-	        }
-
-	        case "Vacation" -> {
-	            highlightButton(btnVacation);
-	            var cardLayout = (CardLayout) panelSubCard.getLayout();
-	            cardLayout.show(panelSubCard, "Vacation");           
-	            loadVacationRequestsData();
-	        }
-
-	        case "LeaveTypes" -> {
-	            highlightButton(btnLeavetypes);
-	            var cardLayoutLeaveTypes = (CardLayout) panelSubCard.getLayout();
-	            cardLayoutLeaveTypes.show(panelSubCard, "LeaveTypes");
-	        }
-
-	        case "ProfileEmployee" -> {
-	            highlightButton(btnProfileEmployee);
-	            var cardLayoutProfile = (CardLayout) panelSubCard.getLayout();
-	            cardLayoutProfile.show(panelSubCard, "ProfileEmployee");
-	        }
-
-	        case "Logout" -> {
-	            highlightButton(btnLogout);
-	            var cardLayout = (CardLayout) contentPaneCard.getLayout();
-	            loadSavedLoginDetails();
-	            cardLayout.show(contentPaneCard, "Login");
-	            btnApproval.setVisible(false);
-	            btnLeavetypes.setVisible(false);
-	        }
-
-	        case "GetMain" -> {
-	            var cardLayout = (CardLayout) contentPaneCard.getLayout();
-	        }
-
-	        case "Login" -> {
-	            checkLogin();
-	            panelStatistics.setVisible(true);
-//	            btnVacation.setVisible(false);
-	        }
-
-	        case "Reset" -> {
-	            Reset();
-	        }
-	    }
-	}
+	}   
+	
 
 
 	public void checkLogin() {
@@ -600,7 +579,7 @@ public class JFrameMain extends JFrame {
 	        cardLayout.show(contentPaneCard, "Main");
 	    } else {
 	        JOptionPane.showMessageDialog(null, "The account does not exist, please re-enter");
-	        Reset();
+	        reset();
 	    }
 	    profileEmployee = new ProfileEmployee();
 		profileEmployee.populateProfile(emp);
@@ -632,7 +611,7 @@ public class JFrameMain extends JFrame {
         }
     }
 
-    public void Reset() {
+    public void reset() {
         txtEmail.setText("");
         txtPassword.setText("");
         chkRememberMe.setSelected(false);
@@ -640,6 +619,14 @@ public class JFrameMain extends JFrame {
         Preferences prefs = Preferences.userNodeForPackage(JFrameMain.class);
         prefs.remove("email");
         prefs.remove("password");
+    }
+    private void logout() {
+        resetButtonColors();
+        loadSavedLoginDetails();
+        CardLayout cardLayout = (CardLayout) contentPaneCard.getLayout();
+        cardLayout.show(contentPaneCard, "Login");
+        btnApproval.setVisible(false);
+        btnLeavetypes.setVisible(false);
     }
 
 //    private void loadNewRequestData() {
@@ -677,5 +664,4 @@ public class JFrameMain extends JFrame {
 		 panelPending.repaint();
 		 
 	 }
-	
 }

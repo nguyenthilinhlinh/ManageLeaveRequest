@@ -182,7 +182,7 @@ public class VacationRequest extends JPanel {
 		});
 		addButton.setMnemonic('d');
 		addButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		addButton.setBounds(481, 530, 137, 36);
+		addButton.setBounds(289, 529, 137, 36);
 		add(addButton);
 		
 		showleaveRequest();
@@ -249,11 +249,11 @@ public class VacationRequest extends JPanel {
 		}
 
 		case "Request for me" -> {
-			add(false);
+			add(true);
 		}
 
 		case "Request for employee" -> {
-			add(true);
+			add(false);
 		}
 
 		}
@@ -285,7 +285,9 @@ public class VacationRequest extends JPanel {
 	}
 
 	protected void edit() {
-		var str = role.getRoleName().equals("User") ? "Submitted" : "Approved by Lead"; 
+		var str = role.getRoleName().equals("Leader") || role.getRoleName().equals("User") 
+		          ? "Submitted" 
+		          : "";
 		if (!table.isRowSelected(table.getSelectedRow())) {
 			JOptionPane.showMessageDialog(scrollPane, "Please select row to update");
 			return;
