@@ -282,7 +282,8 @@ public class PendingApproval extends JPanel {
 					processingLeaveRequestFrame = new JFrame("Processing Leave Request");
 					processingLeaveRequestFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					processingLeaveRequestFrame.getContentPane().add(form);
-					processingLeaveRequestFrame.setSize(580, 300); // Set the width and height of the frame
+
+					processingLeaveRequestFrame.setSize(580, 500); // Set the width and height of the frame
 					processingLeaveRequestFrame.setResizable(false); // Disable resizing
 					processingLeaveRequestFrame.setLocationRelativeTo(null);
 					processingLeaveRequestFrame.setVisible(true);
