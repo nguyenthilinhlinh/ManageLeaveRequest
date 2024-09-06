@@ -110,20 +110,30 @@ public class JFrameMain extends JFrame {
 	 */
 	public JFrameMain() {
 		setBackground(new Color(243, 202, 82));
-		setResizable(false);
-		setTitle("Leave request");
+//		setResizable(false);
+		setTitle("Leave Management Application");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1266, 775);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int screenWidth = screenSize.width;
+		int screenHeight = screenSize.height;
+
+		// Tính toán kích thước hợp lý, có thể là 70% chiều rộng và 70% chiều cao của màn hình
+		int frameWidth = (int) (screenWidth * 0.8);
+		int frameHeight = (int) (screenHeight * 0.8);
+
+		// Thiết lập kích thước và vị trí cho JFrame
+		setBounds((screenWidth - frameWidth) / 2, (screenHeight - frameHeight) / 2, frameWidth, frameHeight);
+		
 		contentPaneCard = new JPanel();
 		contentPaneCard.setBackground(new Color(243, 202, 82));
 		contentPaneCard.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+		contentPaneCard.setPreferredSize(new Dimension(800, 600));
 		setContentPane(contentPaneCard);
 		contentPaneCard.setLayout(new CardLayout(0, 0));
 		initLoginPanel();
 		initMainPanel();
-		 initSidebar();
-	        initNavbar(); 
+		initSidebar();
+	    initNavbar(); 
         loadSavedLoginDetails();
         ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/a.png")));
         setIconImage(icon.getImage());
@@ -137,7 +147,7 @@ public class JFrameMain extends JFrame {
 
 	        JPanel panel = new JPanel();
 	        panel.setBackground(new Color(122, 186, 120));
-	        panel.setBounds(179, 93, 857, 555);
+	        panel.setBounds(81, 25, 857, 555);
 	        panelLogin.add(panel);
 	        panel.setLayout(null);
 
@@ -205,7 +215,7 @@ public class JFrameMain extends JFrame {
 	        JLabel lblLoginTitle = new JLabel("Login");
 	        lblLoginTitle.setFont(new Font("Tahoma", Font.BOLD, 42));
 	        lblLoginTitle.setHorizontalAlignment(SwingConstants.CENTER);
-	        lblLoginTitle.setBounds(10, 21, 837, 59);
+	        lblLoginTitle.setBounds(10, 10, 837, 59);
 	        panel.add(lblLoginTitle);
 	    }
 	 private void initMainPanel() {
@@ -220,7 +230,9 @@ public class JFrameMain extends JFrame {
 
 	        panelNarbar = new JPanel();
 	        panelMain.add(panelNarbar, BorderLayout.NORTH);
-	        
+	        panelNarbar.setPreferredSize(new Dimension(300, 60));
+	        panelNarbar.setMinimumSize(new Dimension(300, 60));    // Kích thước nhỏ nhất
+	        panelNarbar.setMaximumSize(new Dimension(300, 60));    // Kích thước lớn nhất
 	        
 	        panelSubCard = new JPanel();
 	        panelMain.add(panelSubCard, BorderLayout.CENTER);
@@ -263,23 +275,27 @@ public class JFrameMain extends JFrame {
 			gl_panelNarbar.setHorizontalGroup(
 				gl_panelNarbar.createParallelGroup(Alignment.LEADING)
 					.addGroup(gl_panelNarbar.createSequentialGroup()
-						.addGap(27)
+						.addGap(60)
 						.addComponent(lblUser, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(lblNameEmployeeLogin, GroupLayout.PREFERRED_SIZE, 471, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED, 481, Short.MAX_VALUE)
+						.addPreferredGap(ComponentPlacement.RELATED, 486, Short.MAX_VALUE)
 						.addComponent(lblbell, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
-						.addGap(386))
+						.addGap(389))
 			);
 			gl_panelNarbar.setVerticalGroup(
-				gl_panelNarbar.createParallelGroup(Alignment.TRAILING)
-					.addGroup(Alignment.LEADING, gl_panelNarbar.createSequentialGroup()
+				gl_panelNarbar.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_panelNarbar.createSequentialGroup()
+						.addComponent(lblbell, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+						.addGap(20))
+					.addGroup(gl_panelNarbar.createSequentialGroup()
 						.addContainerGap()
-						.addGroup(gl_panelNarbar.createParallelGroup(Alignment.LEADING)
-							.addComponent(lblbell, GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
-							.addComponent(lblNameEmployeeLogin, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
-							.addComponent(lblUser, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
+						.addComponent(lblNameEmployeeLogin, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
 						.addContainerGap())
+					.addGroup(gl_panelNarbar.createSequentialGroup()
+						.addGap(21)
+						.addComponent(lblUser, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(29, Short.MAX_VALUE))
 			);
 			panelNarbar.setLayout(gl_panelNarbar);
 		}
@@ -302,6 +318,7 @@ public class JFrameMain extends JFrame {
 	        btnApproval.setMnemonic('A');
 	        btnApproval.setBackground(colorbutton);
 	        btnApproval.addActionListener(this::checkEventButton);
+	        btnStatistics.setIcon(new ImageIcon(new ImageIcon("image/statistic.png").getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
 	        ImageIcon iconcheck = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/check.png")));
 	        Image resizedImagecheck = iconcheck.getImage().getScaledInstance(30,30, Image.SCALE_SMOOTH); 
 			ImageIcon resizedIconcheck = new ImageIcon(resizedImagecheck);

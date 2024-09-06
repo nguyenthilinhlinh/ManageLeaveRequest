@@ -120,7 +120,8 @@ public class PendingApproval extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// Xử lý sự kiện cho nút "First"
 				var num = pagination.setPagination(e, pageNumber, totalPage);
-				loadData(num);
+//				loadData(num);
+				loadData();
 				pageNumber = num;
 			}
 		});
@@ -130,7 +131,8 @@ public class PendingApproval extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// Xử lý sự kiện cho nút "Previous"
 				var num = pagination.setPagination(e, pageNumber, totalPage);
-				loadData(num);
+//				loadData(num);
+				loadData();
 				pageNumber = num;
 			}
 		});
@@ -140,7 +142,8 @@ public class PendingApproval extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// Xử lý sự kiện cho nút "Next"
 				var num = pagination.setPagination(e, pageNumber, totalPage);
-				loadData(num);
+//				loadData(num);
+				loadData();
 				pageNumber = num;
 
 			}
@@ -151,7 +154,8 @@ public class PendingApproval extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				var num = pagination.setPagination(e, pageNumber, totalPage);
-				loadData(num);
+//				loadData(num);
+				loadData();
 				pageNumber = num;
 			}
 		});
@@ -194,7 +198,7 @@ public class PendingApproval extends JPanel {
 
 
 	public void showAllRequest() {
-//	user = emp;
+		
 		var model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -202,8 +206,8 @@ public class PendingApproval extends JPanel {
 			}
 		};
 		// Create columns
-		model.addColumn("IdHR");
-		model.addColumn("IDEmp");
+		model.addColumn("LeaveRequestID");
+		model.addColumn("EmployeeID");
 		model.addColumn("EmployeeName");
 		model.addColumn("LeaveType");
 		model.addColumn("StartDate");
@@ -217,28 +221,48 @@ public class PendingApproval extends JPanel {
 		var daoLT = new LeaveTypeDao();
 		var dao = new LeaveRequestDao();
 		var daoEmp = new EmployeeDao();
-
-		totalRow = dao.countLRForLeader(user.getEmployeeID(), role); // lay tong so dong
-		totalPage = Math.ceil(totalRow.doubleValue() / rowOfPage.doubleValue()); // tinh so trang
 		
-		dao.selLRequestForLeader(1, rowOfPage, user.getEmployeeID(), role).stream().forEach(lr -> {
-		employee = daoEmp.getEmp(lr.getEmployeeId());
-				if (employee.getEmployeeID() != user.getEmployeeID()) {
-
-					model.addRow(new Object[] { lr.getLeaveRequestId(), employee.getEmployeeID(), employee.getEmployeeName(),
-							daoLT.selectLeaveTypeByIdLr(lr.getLeaveRequestId()).getLeaveTypeName()
-							,lr.getStartDate(), lr.getEndDate(), lr.getReason(), lr.getApproverId(),
-							lr.getSubmissionDate(), lr.getStatusLR() });
-				}
-			
-		});
+//		totalRow = dao.countLRForLeader(user.getEmployeeID(), role); // lay tong so dong
+//		totalPage = Math.ceil(totalRow.doubleValue() / rowOfPage.doubleValue()); // tinh so trang
+		
+//		dao.selLRequestForLeader(1, rowOfPage, user.getEmployeeID(), role).stream().forEach(lr -> {
+//		employee = daoEmp.getEmp(lr.getEmployeeId());
+//				if (employee.getEmployeeID() != user.getEmployeeID()) {
+//
+//					model.addRow(new Object[] { lr.getLeaveRequestId(), employee.getEmployeeID(), employee.getEmployeeName(),
+//							daoLT.selectLeaveTypeByIdLr(lr.getLeaveRequestId()).getLeaveTypeName()
+//							,lr.getStartDate(), lr.getEndDate(), lr.getReason(), lr.getApproverId(),
+//							lr.getSubmissionDate(), lr.getStatusLR() });
+//				}
+//			
+//		});
+		
+		dao.getLeaveRequestForAdmin(1, role).stream().forEach(lr -> {
+				System.out.println(lr.getStatusLR());
+		        employee = daoEmp.getEmp(lr.getEmployeeId());
+		        if (employee != null && employee.getEmployeeID() != user.getEmployeeID()) {
+		            model.addRow(new Object[] {
+		                lr.getLeaveRequestId(),
+		                lr.getEmployeeId(),
+		                employee.getEmployeeName(),
+		                daoLT.selectLeaveTypeByIdLr(lr.getLeaveRequestId()).getLeaveTypeName(),
+		                lr.getStartDate(),
+		                lr.getEndDate(),
+		                lr.getReason(),
+		                lr.getApproverId(),
+		                lr.getSubmissionDate(),
+		                lr.getStatusLR()
+		                
+		            });
+		        }
+		    });
 		table.setModel(model);
-		table.getColumn("IdHR").setMinWidth(0);
-		table.getColumn("IdHR").setMaxWidth(0);
-		table.getColumn("IdHR").setWidth(0);
-		table.getColumn("IDEmp").setMinWidth(0);
-		table.getColumn("IDEmp").setMaxWidth(0);
-		table.getColumn("IDEmp").setWidth(0);
+		table.getColumn("LeaveRequestID").setMinWidth(0);
+		table.getColumn("LeaveRequestID").setMaxWidth(0);
+		table.getColumn("LeaveRequestID").setWidth(0);
+		table.getColumn("EmployeeID").setMinWidth(0);
+		table.getColumn("EmployeeID").setMaxWidth(0);
+		table.getColumn("EmployeeID").setWidth(0);
 
 //		rowSorter = new TableRowSorter<>(model);
 //		table.setRowSorter(rowSorter);
@@ -296,38 +320,80 @@ public class PendingApproval extends JPanel {
 		}
 	}
 
-	public void loadData(Integer pageNumber) {
-		// TODO Auto-generated method stub
-		var model = (DefaultTableModel) table.getModel();
-		model.setRowCount(0); // xoa het du lieu con ben trong
-		var dao = new LeaveRequestDao();
-		totalRow = dao.countLRForLeader(user.getEmployeeID(), role); // lay tong so dong
-		JOptionPane.showMessageDialog(null, totalRow);
-		totalPage = Math.ceil(totalRow.doubleValue() / rowOfPage.doubleValue()); // tinh so trang
+//	public void loadData(Integer pageNumber) {
+//		// TODO Auto-generated method stub
+//		var model = (DefaultTableModel) table.getModel();
+//		model.setRowCount(0); // xoa het du lieu con ben trong
+//		var dao = new LeaveRequestDao();
+//		totalRow = dao.countLRForLeader(user.getEmployeeID(), role); // lay tong so dong
+//		JOptionPane.showMessageDialog(null, totalRow);
+//		totalPage = Math.ceil(totalRow.doubleValue() / rowOfPage.doubleValue()); // tinh so trang
+//
+//		String lblStaPage = " page " + pageNumber + " of " + totalPage.intValue();
+//		var daoLT = new LeaveTypeDao();
+//		var daoEmp = new EmployeeDao();
+//		dao.selLRequestForLeader(1, rowOfPage, user.getEmployeeID(), role).stream().forEach(lr -> {
+//		employee = daoEmp.getEmp(lr.getEmployeeId());
+//				if (employee.getEmployeeID() != user.getEmployeeID()) {
+//					model.addRow(new Object[] { lr.getLeaveRequestId(),employee.getEmployeeID(), employee.getEmployeeName(),
+//							daoLT.selectLeaveTypeByIdLr(lr.getLeaveRequestId()).getLeaveTypeName(),
+//							lr.getStartDate(), lr.getEndDate(), lr.getReason(), lr.getApproverId(),
+//							lr.getSubmissionDate(), lr.getStatusLR() });
+//				}
+//			
+//		});
 
-		String lblStaPage = " page " + pageNumber + " of " + totalPage.intValue();
-		var daoLT = new LeaveTypeDao();
-		var daoEmp = new EmployeeDao();
-		dao.selLRequestForLeader(1, rowOfPage, user.getEmployeeID(), role).stream().forEach(lr -> {
-		employee = daoEmp.getEmp(lr.getEmployeeId());
-				if (employee.getEmployeeID() != user.getEmployeeID()) {
-					model.addRow(new Object[] { lr.getLeaveRequestId(),employee.getEmployeeID(), employee.getEmployeeName(),
-							daoLT.selectLeaveTypeByIdLr(lr.getLeaveRequestId()).getLeaveTypeName(),
-							lr.getStartDate(), lr.getEndDate(), lr.getReason(), lr.getApproverId(),
-							lr.getSubmissionDate(), lr.getStatusLR() });
-				}
-			
-		});
+//		table.setModel(model);
+//		table.getColumn("IdHR").setMinWidth(0);
+//		table.getColumn("IdHR").setMaxWidth(0);
+//		table.getColumn("IdHR").setWidth(0);
+//		table.getColumn("IDEmp").setMinWidth(0);
+//		table.getColumn("IDEmp").setMaxWidth(0);
+//		table.getColumn("IDEmp").setWidth(0);
+//
+//	}
+	public void loadData() {
+	    var model = (DefaultTableModel) table.getModel();
+	    model.setRowCount(0); // Clear the existing rows in the table
 
-		table.setModel(model);
-		table.getColumn("IdHR").setMinWidth(0);
-		table.getColumn("IdHR").setMaxWidth(0);
-		table.getColumn("IdHR").setWidth(0);
-		table.getColumn("IDEmp").setMinWidth(0);
-		table.getColumn("IDEmp").setMaxWidth(0);
-		table.getColumn("IDEmp").setWidth(0);
+	    var dao = new LeaveRequestDao();
+	    
+	    // Load all the leave requests for the leader, since pagination is not needed anymore
+	    var daoLT = new LeaveTypeDao();
+	    var daoEmp = new EmployeeDao();
 
+	    dao.selLRequestForLeader(user.getEmployeeID(), role).stream().forEach(lr -> {
+	        employee = daoEmp.getEmp(lr.getEmployeeId());
+	        
+	        // Skip the current user's requests, if necessary
+	        if (employee.getEmployeeID() != user.getEmployeeID()) {
+	            model.addRow(new Object[] { 
+	                lr.getLeaveRequestId(),
+	                employee.getEmployeeID(), 
+	                employee.getEmployeeName(),
+	                daoLT.selectLeaveTypeByIdLr(lr.getLeaveRequestId()).getLeaveTypeName(),
+	                lr.getStartDate(), 
+	                lr.getEndDate(), 
+	                lr.getReason(), 
+	                lr.getApproverId(),
+	                lr.getSubmissionDate(), 
+	                lr.getStatusLR() 
+	            });
+	        }
+	    });
+
+	    // Set the model to the table
+	    table.setModel(model);
+
+	    // Hide columns `IdHR` and `IDEmp`
+	    table.getColumn("IdHR").setMinWidth(0);
+	    table.getColumn("IdHR").setMaxWidth(0);
+	    table.getColumn("IdHR").setWidth(0);
+	    table.getColumn("IDEmp").setMinWidth(0);
+	    table.getColumn("IDEmp").setMaxWidth(0);
+	    table.getColumn("IDEmp").setWidth(0);
 	}
+
 
 	public void searchTable(String str) {
 		var sorter = (DefaultRowSorter<?, ?>) table.getRowSorter();

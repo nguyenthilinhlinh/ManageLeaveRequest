@@ -51,6 +51,41 @@ public class LeaveRequestDao {
 		return list;
 
 	}
+	public List<LeaveRequests> getLeaveRequestForAdmin(int id, Role r) {
+		
+		var call = "Admin".equals(r.getRoleName()) 
+                ? "call selLRequestForAdmin(?)" 
+                : "call selLRequestForLeader(?)";
+		List<LeaveRequests> list = new ArrayList<>();
+		try (
+
+				var conection = ConnectDB.connect();
+				var cs = CreateCallableStmt.createCS(conection, id, call);
+				var result = cs.executeQuery();) {
+
+			while (result.next()) {
+				var lr = new LeaveRequests();
+				lr.setLeaveRequestId(result.getInt("LeaveRequestID"));
+				lr.setEmployeeId(result.getInt("EmployeeID"));
+				lr.setLeaveTypeId(result.getInt("LeaveTypeID"));
+				lr.setStartDate(result.getDate("StartDate"));
+				lr.setEndDate(result.getDate("EndDate"));
+				lr.setReason(result.getString("Reason"));
+				lr.setStatusLR(result.getString("StatusLR"));
+				lr.setStatus(result.getBoolean("Status"));
+				lr.setApproverId(result.getInt("ApproverID"));
+				lr.setSubmissionDate(result.getDate("SubmissionDate"));
+//				System.out.println("Employee Name: " + result.getString("Name"));
+				list.add(lr);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+
+	}
+	
 
 	public void UpdateStatusLR(String status, int idHR, int id) {
 		try (
@@ -113,14 +148,14 @@ public class LeaveRequestDao {
 		return count;
 	}
 
-	public List<LeaveRequests> selLRequestForLeader(int pageNumber, int rowPage, int idUser, Role r) {
+	public List<LeaveRequests> selLRequestForLeader( int idUser, Role r) {
 		var call = r.getRoleName().equals("Admin") ? "call selLRequestForAdmin(?,?,?)" : "call selLRequestForLeader(?,?,?)";
 			
 		
 //		var call = "call selLRequestForLeader(?,?,?)";
 		List<LeaveRequests> list = new ArrayList<>();
 		try (var con = new ConnectDB().connect();
-				var cs = CreateCallableStmt.createCS(con, pageNumber, rowPage, idUser, call);
+				var cs = CreateCallableStmt.createCS(con,  idUser, call);
 				var result = cs.executeQuery();) {
 			while (result.next()) {
 				LeaveRequests leaveRequest = new LeaveRequests();
