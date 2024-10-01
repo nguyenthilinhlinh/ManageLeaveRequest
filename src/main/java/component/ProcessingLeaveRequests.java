@@ -13,9 +13,8 @@ import javax.swing.SwingConstants;
 
 import dao.LeaveHRDao;
 import dao.LeaveRequestDao;
-import entity.Employees;
-import entity.LeaveHistory;
-import entity.Role;
+import dao.NotificationDao;
+import entity.*;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -24,6 +23,7 @@ import javax.swing.border.EtchedBorder;
 import java.awt.Color;
 import java.awt.Font;
 import component.PendingApproval;
+import entity.Notification;
 
 public class ProcessingLeaveRequests extends JPanel {
 
@@ -230,6 +230,7 @@ public class ProcessingLeaveRequests extends JPanel {
         	var str = role.getRoleName().equals("Admin") ? "Approved by HR" : "Approved by Lead";
             dao.UpdateApproveStatus(str, user.getEmployeeID(), lh.getHistoryId());
             JOptionPane.showMessageDialog(null, "Successfully");
+            this.addNotificationApprove(lh, user, true);
             txtStatus.setText(btnApprove.getText());
             txtStatus.setText("Approved");
             pA.getProcessingLeaveRequestFrame().setVisible(false);
@@ -250,7 +251,22 @@ public class ProcessingLeaveRequests extends JPanel {
         
         pA.showAllRequest();
     }
-    
+
+    private void addNotificationApprove(LeaveHistory lr, Employees user, boolean approved) {
+        var noti = new entity.Notification();
+        var notificationDao = new NotificationDao();
+        noti = new Notification();
+        noti.setLeaveRequestID(lr.getHistoryId());
+        noti.setMessage(user.getEmployeeName() + (approved ? " approved " : " rejected") + " your leave request");
+        noti.setReceiverID(lr.getEmployeeId());
+        var notification = notificationDao.insertNotification(noti);
+        if (notification > 0) {
+            System.out.println("Notification inserted");
+        } else {
+            System.out.println("Notification failed to insert");
+        }
+    }
+
 //    public void addApproveActionListener(ActionListener Listener) {
 //    	btnApprove.addActionListener(Listener);
 //    }
@@ -277,6 +293,7 @@ public class ProcessingLeaveRequests extends JPanel {
 //        parentFrame.showAllRequest();
         
         JOptionPane.showMessageDialog(this, "Leave request rejected successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        this.addNotificationApprove(lh, user, false);
         pA.getProcessingLeaveRequestFrame().setVisible(false);
         CardLayout layout = (CardLayout) getLayout();
         layout.show(this, "panelApproveAnRequest");

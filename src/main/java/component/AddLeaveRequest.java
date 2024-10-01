@@ -548,7 +548,7 @@ public class AddLeaveRequest extends JPanel {
 			var notificationDao = new NotificationDao();
 			noti = new Notification();
 			noti.setLeaveRequestID(leaveRequestID);
-			noti.setMessage("abc");
+			noti.setMessage(user.getEmployeeName() + " submit a leave request for " + diffInDays + " days");
 			noti.setReceiverID(empReceiver.getEmployeeID());
 			var notification = notificationDao.insertNotification(noti);
 			if (notification > 0) {

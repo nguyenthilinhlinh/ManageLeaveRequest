@@ -237,7 +237,7 @@ public class PendingApproval extends JPanel {
 //			
 //		});
 		
-		dao.getLeaveRequestForAdmin(1, role).stream().forEach(lr -> {
+		dao.getLeaveRequestForAdmin(user.getEmployeeID(), role).stream().forEach(lr -> {
 				System.out.println(lr.getStatusLR());
 		        employee = daoEmp.getEmp(lr.getEmployeeId());
 		        if (employee != null && employee.getEmployeeID() != user.getEmployeeID()) {
