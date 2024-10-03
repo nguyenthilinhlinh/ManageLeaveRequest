@@ -31,7 +31,7 @@ import java.awt.Font;
 public class LeaveTypes extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JScrollPane scrollPane;
+	private JScrollPane scrollPane		;
 	private JTextField txtLeaveTypeID;
 	private JTextField txtLeaveTypeName;
 	private JTextField txtLeaveTypeDescription;

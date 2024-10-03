@@ -93,6 +93,7 @@ CREATE TABLE LeaveRequests (
 	ApproverID INT,
     ApprovalDate DATETIME,
 	Status BIT NOT NULL DEFAULT 1,
+	LeaveDuration VARCHAR(25),
     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID),
 	FOREIGN KEY (LeaveTypeID) REFERENCES LeaveTypes(LeaveTypeID),
 	FOREIGN KEY (ApproverID) REFERENCES Employees(EmployeeID)

@@ -14,8 +14,8 @@ public class LeaveRequests {
     private Date submissionDate;
     private Date approvalDate;
     private boolean status;
+    private LeaveDuration leaveDuration;
 	
-    
     
 	public LeaveRequests() {}
 
@@ -153,6 +153,16 @@ public class LeaveRequests {
 				+ ", leaveTypeId=" + leaveTypeId + ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", reason=" + reason + ", statusLR=" + statusLR + ", approverId=" + approverId + ", submissionDate="
 				+ submissionDate + ", approvalDate=" + approvalDate + ", status=" + status + "]";
+	}
+
+
+	public LeaveDuration getLeaveDuration() {
+		return leaveDuration;
+	}
+
+
+	public void setLeaveDuration(LeaveDuration leaveDuration) {
+		this.leaveDuration = leaveDuration;
 	}
 
 	

@@ -150,7 +150,7 @@ public class LeaveHRDao {
 	public void insertLH(LeaveHistory hR, int empId) {
 		try (
 				var con = ConnectDB.connect();
-				var cs = con.prepareCall("{call InsertLeaveRequest(?,?,?,?,?,?)}");
+				var cs = con.prepareCall("{call InsertLeaveRequest(?,?,?,?,?,?,?)}");
 			){
 			cs.setInt(1, empId);
 			cs.setString(2, hR.getLeaveType());
@@ -158,6 +158,7 @@ public class LeaveHRDao {
 			cs.setDate(4, new java.sql.Date(hR.getEndDate().getTime()));
 			cs.setString(5, hR.getReason());
 			cs.setDate(6, new java.sql.Date(hR.getSubmissionDate().getTime()));
+			cs.setString(7, hR.getLeaveDuration().name());
 			cs.executeUpdate();
 			JOptionPane.showMessageDialog(null, "Submit a successful application");
 			
