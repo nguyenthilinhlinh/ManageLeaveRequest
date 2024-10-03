@@ -14,6 +14,7 @@ public class LeaveHistory {
 	private Date submissionDate;
 	private Date approvalDate;
 	private Boolean status;
+	private LeaveDuration leaveDuration;
 	
 	public LeaveHistory() {}
 
@@ -124,6 +125,14 @@ public class LeaveHistory {
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", reason=" + reason + ", approvalStatus="
 				+ approvalStatus + ", approverID=" + approverID + ", submissionDate=" + submissionDate
 				+ ", approvalDate=" + approvalDate + ", status=" + status + "]";
+	}
+
+	public LeaveDuration getLeaveDuration() {
+		return leaveDuration;
+	}
+
+	public void setLeaveDuration(LeaveDuration leaveDuration) {
+		this.leaveDuration = leaveDuration;
 	}
 	
 	

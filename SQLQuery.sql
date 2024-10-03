@@ -622,12 +622,13 @@ create or alter proc InsertLeaveRequest
 @startDate Date,
 @endDate Date,
 @reason NVARCHAR(255),
-@statusLR VARCHAR(20) 
+@statusLR VARCHAR(20),
+@leaveDuration VARCHAR(20)
 AS
 BEGIN
-    INSERT INTO LeaveRequests (EmployeeID, LeaveTypeID, StartDate, EndDate, Reason, StatusLR)
+    INSERT INTO LeaveRequests (EmployeeID, LeaveTypeID, StartDate, EndDate, Reason, StatusLR, LeaveDuration)
 	VALUES
-	(@employeeId, @leaveTypeId, @startDate, @endDate, @reason, @statusLR)
+	(@employeeId, @leaveTypeId, @startDate, @endDate, @reason, @statusLR, @leaveDuration)
 
 	SELECT SCOPE_IDENTITY() AS LeaveRequestID;
 END

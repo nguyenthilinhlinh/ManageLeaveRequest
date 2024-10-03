@@ -277,7 +277,7 @@ public class LeaveRequestDao {
 	public int insertLR(LeaveRequests lr, String statusLR) { 
 		try (
 				var con = ConnectDB.connect();
-				var cs = con.prepareCall("{call InsertLeaveRequest(?,?,?,?,?,?)}");
+				var cs = con.prepareCall("{call InsertLeaveRequest(?,?,?,?,?,?,?)}");
 			){
 			cs.setInt(1, lr.getEmployeeId());
 			cs.setInt(2, lr.getLeaveTypeId());
@@ -285,6 +285,7 @@ public class LeaveRequestDao {
 			cs.setDate(4, new java.sql.Date(lr.getEndDate().getTime()));
 			cs.setString(5, lr.getReason());
 			cs.setString(6, statusLR);
+			cs.setString(7, lr.getLeaveDuration().name());
 			var rowsAffected = cs.executeUpdate();
 			
 			
