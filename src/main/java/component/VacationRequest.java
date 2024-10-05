@@ -14,20 +14,29 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import com.toedter.calendar.DateUtil;
+
 import dao.LeaveDocumentDao;
 import dao.LeaveHRDao;
 import dao.LeaveRequestDao;
 import dao.LeaveTypeDao;
 import entity.Employees;
+import entity.LeaveDuration;
 import entity.LeaveRequests;
+import entity.LeaveType;
 import entity.Role;
 import gui.JFrameMain;
+import helper.DateUtils;
 
 import java.awt.GridLayout;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -59,20 +68,21 @@ public class VacationRequest extends JPanel {
 	private JScrollPane scrollPane;
 	private JTable table;
 	private Employees user;
-	private JFrameMain ma;
 	private JFrame JformEdit;
 	private Role role;
 	private JMenuBar menuBarRequset;
 	private JMenu mnNewMenu;
 	private JMenuItem mntmRequestforme;
 	private JMenuItem mntmRequestForEmployee;
-	private JComboBox cbbStatusApproved;
+	private JComboBox<String> cbbStatusApproved;
 	private JButton addButton;
-	
-	
+
+	private final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+
 	public JFrame getJformEdit() {
 		return JformEdit;
 	}
+
 	/**
 	 * Create the panel.
 	 */
@@ -81,20 +91,27 @@ public class VacationRequest extends JPanel {
 		role = r;
 		user = emp;
 		setLayout(null);
-		
+
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 75, 952, 444);
 		add(scrollPane);
-		
-		
+
 		table = new JTable();
 		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		
+
 		table.setAutoCreateRowSorter(true);
+		table.setRowHeight(30);
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				tableMouseClicked(e);
+			}
+		});
+
 		scrollPane.setViewportView(table);
 		JTableHeader header = table.getTableHeader();
 		header.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		
+
 		deleteButton = new JButton("Delete Request");
 		deleteButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		deleteButton.setBounds(656, 530, 137, 36);
@@ -105,7 +122,7 @@ public class VacationRequest extends JPanel {
 			}
 		});
 		deleteButton.setMnemonic('d');
-		
+
 		editButton = new JButton("Edit Request");
 		editButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		editButton.setBounds(825, 530, 137, 36);
@@ -116,7 +133,7 @@ public class VacationRequest extends JPanel {
 			}
 		});
 		editButton.setMnemonic('e');
-		
+
 		txtSearch = new JTextField();
 		txtSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -127,18 +144,20 @@ public class VacationRequest extends JPanel {
 		txtSearch.setBounds(674, 11, 288, 53);
 		add(txtSearch);
 		txtSearch.setColumns(10);
-		txtSearch.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "<html><div style=\"font-size:16px\">Search", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		
+		txtSearch.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+				"<html><div style=\"font-size:16px\">Search", TitledBorder.LEADING, TitledBorder.TOP, null,
+				new Color(0, 0, 0)));
+
 		menuBarRequset = new JMenuBar();
 		menuBarRequset.setBounds(481, 528, 137, 36);
 		add(menuBarRequset);
 		menuBarRequset.setVisible(false);
-		
-		
+
 		mnNewMenu = new JMenu("New Request ");
 		mnNewMenu.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		menuBarRequset.add(mnNewMenu);
-		
+
 		mntmRequestforme = new JMenuItem("Request for me");
 		mntmRequestforme.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mntmRequestforme.addActionListener(new ActionListener() {
@@ -147,7 +166,7 @@ public class VacationRequest extends JPanel {
 			}
 		});
 		mnNewMenu.add(mntmRequestforme);
-		
+
 		mntmRequestForEmployee = new JMenuItem("Request for employee");
 		mntmRequestForEmployee.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mntmRequestForEmployee.addActionListener(new ActionListener() {
@@ -156,24 +175,24 @@ public class VacationRequest extends JPanel {
 			}
 		});
 		mnNewMenu.add(mntmRequestForEmployee);
-		
-		cbbStatusApproved = new JComboBox();
+
+		cbbStatusApproved = new JComboBox<>();
 		cbbStatusApproved.setBackground(new Color(240, 240, 240));
 		cbbStatusApproved.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cbbStatusApprovedActionPerformed(e);
 			}
 		});
-//		cbbStatusApproved.addItemListener(new ItemListener() {
-//			public void itemStateChanged(ItemEvent e) {
-//				cbbStatusApprovedItemStateChanged(e);
-//			}
-//		});
-		cbbStatusApproved.setModel(new DefaultComboBoxModel(new String[] {"", "Submitted", "Viewed by Lead", "Approved by Lead", "Viewed by HR", "Approved by HR", "Rejected"}));
-		cbbStatusApproved.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "<html><div style=\"font-size:16px\">Status</div></html>", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+
+		cbbStatusApproved.setModel(new DefaultComboBoxModel<String>(new String[] { "", "Submitted", "Viewed by Lead",
+				"Approved by Lead", "Viewed by HR", "Approved by HR", "Rejected" }));
+		cbbStatusApproved.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
+				"<html><div style=\"font-size:16px\">Status</div></html>", TitledBorder.LEADING, TitledBorder.TOP, null,
+				new Color(0, 0, 0)));
 		cbbStatusApproved.setBounds(449, 11, 190, 53);
 		add(cbbStatusApproved);
-		
+
 		addButton = new JButton("Add Request");
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -182,11 +201,40 @@ public class VacationRequest extends JPanel {
 		});
 		addButton.setMnemonic('d');
 		addButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		addButton.setBounds(289, 529, 137, 36);
+		addButton.setBounds(491, 530, 137, 36);
 		add(addButton);
-		
+
 		showleaveRequest();
 	}
+
+	protected void tableMouseClicked(MouseEvent e) {
+		// check double click
+		if (e.getClickCount() != 2) {
+			return;
+		}
+
+		AddLeaveRequest formEdit = new AddLeaveRequest();
+
+		if (JformEdit != null && JformEdit.isShowing()) {
+			JformEdit.dispose();
+		}
+
+		int row = table.getSelectedRow();
+		int leaveRequestId = (int) table.getValueAt(row, 0);
+
+		var daoLR = new LeaveRequestDao();
+		daoLR.getLeaveRequestById(leaveRequestId).ifPresent(leaveRequest -> {
+			JformEdit = new JFrame("View request");
+			JformEdit.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			JformEdit.getContentPane().add(formEdit);
+			formEdit.loadDataDetail(user, leaveRequest);
+			JformEdit.setSize(900, 600); // Set the width and height of the frame
+			JformEdit.setResizable(false); // Disable resizing
+			JformEdit.setLocationRelativeTo(null);
+			JformEdit.setVisible(true);
+		});
+	}
+
 	public void showleaveRequest() {
 
 		var daoLR = new LeaveRequestDao();
@@ -198,7 +246,8 @@ public class VacationRequest extends JPanel {
 				return false; // All cells are non-editable
 			}
 		};
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+		var leaveRequestTypes = daoLT.getAll();
 
 //		tạo cột
 		model.addColumn("Id");
@@ -208,16 +257,15 @@ public class VacationRequest extends JPanel {
 		model.addColumn("LeaveType");
 		model.addColumn("StartDate");
 		model.addColumn("EndDate");
+		model.addColumn("Duration");
 		model.addColumn("Reason");
 		model.addColumn("ApprovalStatus");
 		model.addColumn("SubmissionDate");
 
 //		add hang vao	
 
-		daoLR.getLeaveRequests(user.getEmployeeID()).stream().forEach(lr -> {
-			model.addRow(new Object[] { lr.getLeaveRequestId(), lr.getLeaveTypeId(), lr.getApproverId(),
-					user.getEmployeeName(), daoLT.selectLeaveTypeById(lr.getLeaveTypeId()).getLeaveTypeName(),
-					lr.getStartDate(), lr.getEndDate(), lr.getReason(), lr.getStatusLR(), lr.getSubmissionDate() });
+		daoLR.getLeaveRequests(user.getEmployeeID()).forEach(lr -> {
+			model.addRow(this.buildRow(lr, leaveRequestTypes));
 		});
 //		});
 		table.setModel(model);
@@ -230,6 +278,39 @@ public class VacationRequest extends JPanel {
 		table.getColumn("IdApproved").setMinWidth(2);
 		table.getColumn("IdApproved").setMaxWidth(2);
 		table.getColumn("IdApproved").setWidth(2);
+		table.getColumn("Reason").setMinWidth(0);
+		table.getColumn("Reason").setMaxWidth(0);
+		table.getColumn("Reason").setWidth(0);
+		table.getColumn("StartDate").setMinWidth(0);
+		table.getColumn("StartDate").setPreferredWidth(60);
+		table.getColumn("EndDate").setMinWidth(0);
+		table.getColumn("EndDate").setPreferredWidth(60);
+		table.getColumn("Duration").setMinWidth(0);
+		table.getColumn("Duration").setPreferredWidth(110);
+		table.getColumn("ApprovalStatus").setPreferredWidth(105);
+	}
+
+	private Object[] buildRow(LeaveRequests lr, List<LeaveType> leaveRequestTypes) {
+		var leaveRequestTypeName = leaveRequestTypes.stream()
+				.filter(leaveRequestType -> leaveRequestType.getLeaveTypeID() == lr.getLeaveTypeId()).findFirst()
+				.map(LeaveType::getLeaveTypeName).orElse("");
+
+		var duration = DateUtils.between(lr.getStartDate(), lr.getEndDate());
+		var days = duration.toHours() / 24;
+
+		var displayDuration = "";
+		if (days == 0) {
+			var isFullDay = lr.getLeaveDuration() == LeaveDuration.FULL_DAY;
+			displayDuration = isFullDay ? "1 day"
+					: (lr.getLeaveDuration() == LeaveDuration.HALF_DAY_MORNING ? "0.5 day (Morning)"
+							: "0.5 day (Afternoon)");
+		} else {
+			displayDuration = ((days + 1) + " days");
+		}
+
+		return new Object[] { lr.getLeaveRequestId(), lr.getLeaveTypeId(), lr.getApproverId(), user.getEmployeeName(),
+				leaveRequestTypeName, DATE_FORMATTER.format(lr.getStartDate()), DATE_FORMATTER.format(lr.getEndDate()),
+				displayDuration, lr.getReason(), lr.getStatusLR(), DATE_FORMATTER.format(lr.getSubmissionDate()) };
 	}
 
 	public void checkEventButton(ActionEvent e) {
@@ -260,7 +341,7 @@ public class VacationRequest extends JPanel {
 	}
 
 	protected void delete() {
-		var str = role.getRoleName().equals("User") ? "Submitted" : "Approved by Lead"; 
+		var str = role.getRoleName().equals("User") ? "Submitted" : "Approved by Lead";
 		if (!table.isRowSelected(table.getSelectedRow())) {
 			JOptionPane.showMessageDialog(scrollPane, "Please select row to delete");
 			return;
@@ -285,9 +366,7 @@ public class VacationRequest extends JPanel {
 	}
 
 	protected void edit() {
-		var str = role.getRoleName().equals("Leader") || role.getRoleName().equals("User") 
-		          ? "Submitted" 
-		          : "";
+		var str = role.getRoleName().equals("Leader") || role.getRoleName().equals("User") ? "Submitted" : "";
 		if (!table.isRowSelected(table.getSelectedRow())) {
 			JOptionPane.showMessageDialog(scrollPane, "Please select row to update");
 			return;
@@ -320,10 +399,9 @@ public class VacationRequest extends JPanel {
 			JformEdit.setLocationRelativeTo(null);
 			JformEdit.setVisible(true);
 		}
-		
+
 	}
 
-	
 	protected void add(Boolean b) {
 		AddLeaveRequest formEdit = new AddLeaveRequest();
 		if (JformEdit == null || !JformEdit.isShowing()) {
