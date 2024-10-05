@@ -2,6 +2,8 @@ package entity;
 
 import java.util.Date;
 
+import helper.DateUtils;
+
 public class LeaveRequests {
 	private int leaveRequestId;
     private int employeeId;
@@ -164,6 +166,4 @@ public class LeaveRequests {
 	public void setLeaveDuration(LeaveDuration leaveDuration) {
 		this.leaveDuration = leaveDuration;
 	}
-
-	
 }

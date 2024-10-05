@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
 import database.ConnectDB;
+import entity.LeaveDuration;
 import entity.LeaveHistory;
 import entity.LeaveRequests;
 //import subFrame.HistoryRequest;
@@ -19,6 +21,35 @@ import entity.Role;
 
 public class LeaveRequestDao {
 
+	public Optional<LeaveRequests> getLeaveRequestById(int id) {
+		var call = "call usp_GetLeaveRequestById(?)";
+		try (
+
+				var conection = ConnectDB.connect();
+				var cs = CreateCallableStmt.createCS(conection, id, call);
+				var result = cs.executeQuery();) {
+
+			while (result.next()) {
+				var lr = new LeaveRequests();
+				lr.setLeaveRequestId(result.getInt("LeaveRequestID"));
+				lr.setEmployeeId(result.getInt("EmployeeID"));
+				lr.setLeaveTypeId(result.getInt("LeaveTypeID"));
+				lr.setStartDate(result.getDate("StartDate"));
+				lr.setEndDate(result.getDate("EndDate"));
+				lr.setReason(result.getString("Reason"));
+				lr.setStatusLR(result.getString("StatusLR"));
+				lr.setStatus(result.getBoolean("Status"));
+				lr.setApproverId(result.getInt("ApproverID"));
+				lr.setSubmissionDate(result.getDate("SubmissionDate"));
+				lr.setLeaveDuration(LeaveDuration.valueOf(result.getString("LeaveDuration")));
+				return Optional.of(lr);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Optional.empty();
+	}
 
 	public List<LeaveRequests> getLeaveRequests(int id) {
 		var call = "call selectLeaveRequest(?)";
@@ -41,7 +72,7 @@ public class LeaveRequestDao {
 				lr.setStatus(result.getBoolean("Status"));
 				lr.setApproverId(result.getInt("ApproverID"));
 				lr.setSubmissionDate(result.getDate("SubmissionDate"));
-//				System.out.println("Employee Name: " + result.getString("Name"));
+				lr.setLeaveDuration(LeaveDuration.valueOf(result.getString("LeaveDuration")));
 				list.add(lr);
 			}
 

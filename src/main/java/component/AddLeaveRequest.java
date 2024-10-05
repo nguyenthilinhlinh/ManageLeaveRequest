@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 import dao.DepartmentDao;
 import dao.EmployeeDao;
@@ -29,7 +30,10 @@ import entity.LeaveRequests;
 import entity.LeaveType;
 import entity.Notification;
 import entity.Role;
+import helper.DateUtils;
+
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListDataListener;
 import javax.swing.border.EtchedBorder;
 import entity.LeaveDuration;
 
@@ -37,30 +41,27 @@ public class AddLeaveRequest extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panelForm;
-	private JTextField txtEmployeeMail;
 	private JPanel panel;
 	private JLabel lblFullName;
 	private JTextField txtfullName;
 	private JLabel lblDepartment;
-	private JComboBox cmbDepartment;
-	private JComboBox cmbLeaveType;
+	private JComboBox<String> cmbDepartment;
+	private JComboBox<String> cmbLeaveType;
 	private JTextArea txtReason;
-	private JDateChooser dateChooser;
 	private JDateChooser startDateChooser;
 	private JDateChooser endDateChooser;
-	private JDateChooser startDateChooser_1;
 
-	private JPanel panelbutton;
-	private JComboBox cmbApprover;
-	private JButton btnChooseFile;
-	private JLabel lblNewLabel;
+	private final JPanel panelbutton;
+	private final JComboBox<String> cmbApprover;
+	private final JButton btnChooseFile;
+	private final JLabel lblNewLabel;
+	private final JComboBox<String> cbbEmpName;
+	private final JLabel lblAdditionalFiles;
 
+	private List<Employees> listEmp = null;
 	private Employees user;
 	private Employees empReceiver;
 	private Employees empOldReceiver;
-	private JComboBox cbbEmpName;
-	private List<Employees> listEmp = null;
-	private JLabel lblAdditionalFiles;
 	private List<LeaveType> listLT;
 	private String statusLR;
 	private VacationRequest va;
@@ -76,8 +77,8 @@ public class AddLeaveRequest extends JPanel {
 	private JLabel lblImage;
 	private JButton btnUpdate;
 	private JButton btnSubmit;
-	private Notification noti;
 	private JComboBox<LeaveDuration> cmbDuration;
+	private final JLabel lblDuration;
 
 	/**
 	 * Create the panel.
@@ -141,7 +142,7 @@ public class AddLeaveRequest extends JPanel {
 		lblApprover.setBounds(60, 168, 237, 25);
 		panel.add(lblApprover);
 
-		cmbApprover = new JComboBox<>();
+		cmbApprover = new JComboBox<String>();
 		cmbApprover.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		cmbApprover.setBounds(60, 204, 295, 34);
 		panel.add(cmbApprover);
@@ -237,11 +238,11 @@ public class AddLeaveRequest extends JPanel {
         });
 		panel.add(cmbDuration);
 
-		JLabel lblApprover_1 = new JLabel("Duration:");
-		lblApprover_1.setFont(new Font("Dialog", Font.PLAIN, 16));
-		lblApprover_1.setBounds(481, 168, 237, 25);
-		panel.add(lblApprover_1);
-
+		lblDuration = new JLabel("Duration:");
+		lblDuration.setFont(new Font("Dialog", Font.PLAIN, 16));
+		lblDuration.setBounds(481, 168, 237, 25);
+		panel.add(lblDuration);
+	
 		panelbutton = new JPanel();
 		panelbutton.setBackground(new Color(191, 246, 195));
 		GridBagConstraints gbc_panelbutton = new GridBagConstraints();
@@ -250,11 +251,6 @@ public class AddLeaveRequest extends JPanel {
 		gbc_panelbutton.gridy = 2;
 		add(panelbutton, gbc_panelbutton);
 		panelbutton.setLayout(null);
-
-		// btnSubmit = new JButton("Submit");
-		// btnSubmit.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		// btnSubmit.setBounds(338, 11, 250, 37);
-		// panelbutton.add(btnSubmit);
 
 		btnUpdate = new JButton("Update");
 		btnUpdate.setVisible(false);
@@ -277,11 +273,78 @@ public class AddLeaveRequest extends JPanel {
 		btnSubmit.setBounds(339, 8, 249, 37);
 		panelbutton.add(btnSubmit);
 
-		cbbEmpName = new JComboBox();
+		cbbEmpName = new JComboBox<>();
 		cbbEmpName.setVisible(false);
 
 	}
 
+	public void loadDataDetail(Employees emp, LeaveRequests leaveRequest) {
+		var daoEmp = new EmployeeDao();
+		txtfullName.setText(daoEmp.getEmp(leaveRequest.getEmployeeId()).getEmployeeName());
+		
+		// department
+		var departmentDao = new DepartmentDao();
+		var department = departmentDao.selectDepartment(emp.getEmployeeID());
+		Optional.ofNullable(department).ifPresent(dep -> {
+			cmbDepartment.addItem(dep.getDepartmentName());
+		});
+		
+		// leave type
+		var daoLT = new LeaveTypeDao();
+		daoLT.getAll().stream().filter(leaveType -> leaveType.getLeaveTypeID() == leaveRequest.getLeaveTypeId()).findFirst().map(LeaveType::getLeaveTypeName)
+			.ifPresent(cmbLeaveType::addItem);
+		
+		startDateChooser.setDate(leaveRequest.getStartDate());
+		((JTextFieldDateEditor)startDateChooser.getDateEditor()).setEditable(false);
+		endDateChooser.setDate(leaveRequest.getEndDate());
+		((JTextFieldDateEditor)endDateChooser.getDateEditor()).setEditable(false);
+		
+		var duration = DateUtils.between(leaveRequest.getStartDate(), leaveRequest.getEndDate());
+		var days = duration.toHours() / 24;
+		
+		var displayDuration = "";
+		if (days == 0) {
+			var isFullDay = leaveRequest.getLeaveDuration() == LeaveDuration.FULL_DAY;
+			displayDuration = isFullDay ? "1 day" : 
+				(leaveRequest.getLeaveDuration() == LeaveDuration.HALF_DAY_MORNING ? "0.5 day (Morning)" : "0.5 day (Afternoon)");
+		} else {
+			displayDuration = ((days + 1) + " days");
+		}
+		
+		// duration
+		lblDuration.setText(lblDuration.getText() + " " + displayDuration);
+		cmbDuration.removeAllItems();
+		cmbDuration.addItem(leaveRequest.getLeaveDuration());
+		
+		txtReason.setText(leaveRequest.getReason());
+		
+		var role = daoEmp.selectRole(emp.getEmployeeID());
+		switch (role.getRoleName()) {
+			case "User" -> {
+				empReceiver = daoEmp.selectEmpbyidDeparment(department.getDepartmentId(), "Leader");
+				cmbApprover.addItem(empReceiver.getEmployeeName());
+			}
+	
+			case "Leader" -> {
+				empReceiver = daoEmp.selectEmpbyRoleName("Admin");
+				JOptionPane.showMessageDialog(null, empReceiver.getEmployeeName());
+				cmbApprover.addItem(empReceiver.getEmployeeName());
+			}
+		}
+		
+		// leave document
+		var leaveDocument = new LeaveDocumentDao().selectLeaveDocument(leaveRequest.getLeaveRequestId());
+		if (leaveDocument.getDocumentPath() != null) {
+			lblImage.setIcon(new ImageIcon(new ImageIcon(leaveDocument.getDocumentPath()).getImage()
+					.getScaledInstance(lblImage.getY(), lblImage.getX(), Image.SCALE_SMOOTH)));
+		}
+		
+		lblNewLabel.setText("Detail request leave");
+		
+		btnUpdate.setVisible(false);
+		btnSubmit.setVisible(false);
+	}
+	
 	public void loadDataAdd(Employees emp, Role r, Boolean b, VacationRequest vR) {
 		va = vR;
 		user = emp;
