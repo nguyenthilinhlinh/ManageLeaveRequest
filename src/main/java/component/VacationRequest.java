@@ -1,21 +1,40 @@
 package component;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
-import com.toedter.calendar.DateUtil;
-
+import constants.UIConstants;
+import context.AuthenticationContextManager;
 import dao.LeaveDocumentDao;
 import dao.LeaveHRDao;
 import dao.LeaveRequestDao;
@@ -25,39 +44,7 @@ import entity.LeaveDuration;
 import entity.LeaveRequests;
 import entity.LeaveType;
 import entity.Role;
-import gui.JFrameMain;
 import helper.DateUtils;
-
-import java.awt.GridLayout;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
-import java.awt.Color;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.border.EtchedBorder;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultRowSorter;
-
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.Font;
 
 public class VacationRequest extends JPanel {
 
@@ -86,21 +73,17 @@ public class VacationRequest extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public VacationRequest(Employees emp, Role r) {
+	public VacationRequest() {
 		setBackground(new Color(191, 246, 195));
-		role = r;
-		user = emp;
+		role = AuthenticationContextManager.getInstance().getAuthz();
+		user = AuthenticationContextManager.getInstance().getAuthn();
 		setLayout(null);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 75, 952, 444);
 		add(scrollPane);
 
-		table = new JTable();
-		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
-
-		table.setAutoCreateRowSorter(true);
-		table.setRowHeight(30);
+		table = new StyledTable();
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -110,10 +93,10 @@ public class VacationRequest extends JPanel {
 
 		scrollPane.setViewportView(table);
 		JTableHeader header = table.getTableHeader();
-		header.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		header.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 
 		deleteButton = new JButton("Delete Request");
-		deleteButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		deleteButton.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		deleteButton.setBounds(656, 530, 137, 36);
 		add(deleteButton);
 		deleteButton.addActionListener(new ActionListener() {
@@ -124,7 +107,7 @@ public class VacationRequest extends JPanel {
 		deleteButton.setMnemonic('d');
 
 		editButton = new JButton("Edit Request");
-		editButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		editButton.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		editButton.setBounds(825, 530, 137, 36);
 		add(editButton);
 		editButton.addActionListener(new ActionListener() {
@@ -200,11 +183,21 @@ public class VacationRequest extends JPanel {
 			}
 		});
 		addButton.setMnemonic('d');
-		addButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		addButton.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		addButton.setBounds(491, 530, 137, 36);
 		add(addButton);
 
-		showleaveRequest();
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				user = AuthenticationContextManager.getInstance().getAuthn();
+				role = AuthenticationContextManager.getInstance().getAuthz();
+				
+
+				showleaveRequest();
+			}
+		});
+		
 	}
 
 	protected void tableMouseClicked(MouseEvent e) {

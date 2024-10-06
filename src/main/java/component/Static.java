@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import com.toedter.calendar.JCalendar;
 
+import constants.UIConstants;
 import dao.EmployeeDao;
 import dao.LeaveRequestDao;
 import dao.LeaveTypeDao;
@@ -96,7 +97,7 @@ public class Static extends JPanel {
 		todayPanel.add(todayCountLabel, BorderLayout.CENTER);
 		
 		todayDetailsButton = new JButton("VIEW DETAILS");
-		todayDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		todayDetailsButton.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		todayDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				todayDetailsButtonActionPerformed(e);
@@ -115,7 +116,7 @@ public class Static extends JPanel {
 		weekPanel.add(weekCountLabel, BorderLayout.CENTER);
 		
 		weekDetailsButton = new JButton("VIEW DETAILS");
-		weekDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		weekDetailsButton.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		weekDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				weekDetailsButtonActionPerformed(e);
@@ -134,7 +135,7 @@ public class Static extends JPanel {
 		monthPanel.add(monthCountLabel, BorderLayout.CENTER);
 		
 		monthDetailsButton = new JButton("VIEW DETAILS");
-		monthDetailsButton.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		monthDetailsButton.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		monthDetailsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				monthDetailsButtonActionPerformed(e);
@@ -155,9 +156,9 @@ public class Static extends JPanel {
 		calendarPanel.setLayout(new BorderLayout());
 		
 		calendar = new JCalendar();
-		calendar.getMonthChooser().getSpinner().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		calendar.getMonthChooser().getComboBox().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		calendar.getYearChooser().getSpinner().setFont(new Font("Tahoma", Font.PLAIN, 16));
+		calendar.getMonthChooser().getSpinner().setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
+		calendar.getMonthChooser().getComboBox().setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
+		calendar.getYearChooser().getSpinner().setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		calendar.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				calendarPropertyChange(evt);
@@ -178,7 +179,7 @@ public class Static extends JPanel {
 		holidaysPanel.add(holidaysArea, BorderLayout.CENTER);
 		
 		holidaysLabel = new JLabel("Holidays");
-		holidaysLabel.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		holidaysLabel.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 24));
 		holidaysPanel.add(holidaysLabel, BorderLayout.NORTH);
 	}
 	
@@ -229,7 +230,7 @@ public class Static extends JPanel {
 	
 	private void showEmployeeDetails(JButton button, String str) {
 	  
-	    JTable table = new JTable();
+	    JTable table = new StyledTable();
 	    JScrollPane scrollPane = new JScrollPane(table);
 	    
 	    var model = new DefaultTableModel() {

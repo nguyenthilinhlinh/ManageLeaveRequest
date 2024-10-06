@@ -14,6 +14,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.border.TitledBorder;
+
+import constants.UIConstants;
+
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -48,18 +51,18 @@ public class Pagination extends JPanel {
 		setLayout(new MigLayout("", "[105.00][107.00][][105.00][105.00]", "[30.00][]"));
 		
 		btnFirst = new JButton("<< First");
-		btnFirst.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnFirst.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		
 		add(btnFirst, "cell 0 1,grow");
 		
 		btnPrivious = new JButton("< Privious");
-		btnPrivious.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnPrivious.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		
 		
 		add(btnPrivious, "cell 1 1,grow");
 		
 		txtPage = new JTextField();
-		txtPage.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtPage.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		txtPage.setText("1");
 		txtPage.setHorizontalAlignment(SwingConstants.CENTER);
 		txtPage.setBorder(new MatteBorder(0, 0, 1, 0, (Color) SystemColor.textHighlight));
@@ -68,12 +71,12 @@ public class Pagination extends JPanel {
 		txtPage.setColumns(10);
 		
 		btnNext = new JButton("Next >");
-		btnNext.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnNext.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		
 			add(btnNext, "cell 3 1,grow");
 			
 			btnLast = new JButton("Last >>");
-			btnLast.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			btnLast.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 			
 			add(btnLast, "cell 4 1,grow");
 		

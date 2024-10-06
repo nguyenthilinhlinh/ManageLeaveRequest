@@ -3,7 +3,6 @@ package component;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
 
+import constants.UIConstants;
 import dao.DepartmentDao;
 import dao.EmployeeDao;
 import dao.LeaveDocumentDao;
@@ -32,9 +32,6 @@ import entity.Notification;
 import entity.Role;
 import helper.DateUtils;
 
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListDataListener;
-import javax.swing.border.EtchedBorder;
 import entity.LeaveDuration;
 
 public class AddLeaveRequest extends JPanel {
@@ -103,7 +100,7 @@ public class AddLeaveRequest extends JPanel {
 
 		lblNewLabel = new JLabel("Submit a leave request");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblNewLabel.setFont(new Font(UIConstants.FONT_FAMILY, Font.BOLD, 24));
 		panelForm.add(lblNewLabel, "name_7090862684308");
 
 		panel = new JPanel();
@@ -116,49 +113,49 @@ public class AddLeaveRequest extends JPanel {
 		panel.setLayout(null);
 
 		lblFullName = new JLabel("FullName :");
-		lblFullName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblFullName.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblFullName.setBounds(60, 12, 107, 14);
 		panel.add(lblFullName);
 
 		txtfullName = new JTextField();
 		txtfullName.setEditable(false);
-		txtfullName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtfullName.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		txtfullName.setBounds(60, 37, 295, 34);
 		txtfullName.setColumns(10);
 		panel.add(txtfullName);
 
 		lblDepartment = new JLabel("Department :");
-		lblDepartment.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblDepartment.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblDepartment.setBounds(60, 83, 107, 20);
 		panel.add(lblDepartment);
 
 		cmbDepartment = new JComboBox<>();
-		cmbDepartment.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		cmbDepartment.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		cmbDepartment.setBounds(60, 114, 295, 34);
 		panel.add(cmbDepartment);
 
 		JLabel lblApprover = new JLabel("Recipient of the application :");
-		lblApprover.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblApprover.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblApprover.setBounds(60, 168, 237, 25);
 		panel.add(lblApprover);
 
 		cmbApprover = new JComboBox<String>();
-		cmbApprover.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		cmbApprover.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		cmbApprover.setBounds(60, 204, 295, 34);
 		panel.add(cmbApprover);
 
 		JLabel lblLeaveType = new JLabel("Types of Leave :");
-		lblLeaveType.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblLeaveType.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblLeaveType.setBounds(481, 12, 120, 25);
 		panel.add(lblLeaveType);
 
 		cmbLeaveType = new JComboBox<>();
-		cmbLeaveType.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		cmbLeaveType.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		cmbLeaveType.setBounds(481, 37, 344, 34);
 		panel.add(cmbLeaveType);
 
 		JLabel lblReason = new JLabel("Reason for leaving:");
-		lblReason.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblReason.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblReason.setBounds(481, 238, 156, 25);
 		panel.add(lblReason);
 
@@ -169,7 +166,7 @@ public class AddLeaveRequest extends JPanel {
 		panel.add(txtReason);
 
 		btnChooseFile = new JButton("Add file");
-		btnChooseFile.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnChooseFile.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		btnChooseFile.setBounds(60, 297, 295, 25);
 		btnChooseFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -179,30 +176,30 @@ public class AddLeaveRequest extends JPanel {
 		panel.add(btnChooseFile);
 
 		JLabel lblStartDate = new JLabel("Start day:");
-		lblStartDate.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblStartDate.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblStartDate.setBounds(481, 85, 120, 25);
 		panel.add(lblStartDate);
 
 		startDateChooser = new JDateChooser();
 		startDateChooser.setDate(new java.util.Date());
 		startDateChooser.setDateFormatString("dd/MM/yyyy");
-		startDateChooser.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		startDateChooser.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		startDateChooser.setBounds(481, 119, 156, 35);
 		panel.add(startDateChooser);
 
 		JLabel lblEndDate = new JLabel("End date :");
-		lblEndDate.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblEndDate.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblEndDate.setBounds(686, 85, 120, 25);
 		panel.add(lblEndDate);
 
 		endDateChooser = new JDateChooser();
 		endDateChooser.setDate(new java.util.Date());
 		endDateChooser.setDateFormatString("dd/MM/yyyy");
-		endDateChooser.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		endDateChooser.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		endDateChooser.setBounds(669, 119, 156, 35);
 		panel.add(endDateChooser);
 		lblAdditionalFiles = new JLabel("Additional files :");
-		lblAdditionalFiles.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblAdditionalFiles.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		lblAdditionalFiles.setBounds(60, 264, 174, 25);
 		panel.add(lblAdditionalFiles);
 
@@ -259,7 +256,7 @@ public class AddLeaveRequest extends JPanel {
 				btnUpdateActionPerformed(e);
 			}
 		});
-		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnUpdate.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		btnUpdate.setBounds(339, 8, 250, 37);
 		panelbutton.add(btnUpdate);
 
@@ -269,7 +266,7 @@ public class AddLeaveRequest extends JPanel {
 				btnSubmitActionPerformed(e);
 			}
 		});
-		btnSubmit.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnSubmit.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		btnSubmit.setBounds(339, 8, 249, 37);
 		panelbutton.add(btnSubmit);
 
