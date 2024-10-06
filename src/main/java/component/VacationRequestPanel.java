@@ -46,7 +46,7 @@ import entity.LeaveType;
 import entity.Role;
 import helper.DateUtils;
 
-public class VacationRequest extends JPanel {
+public class VacationRequestPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JButton editButton;
@@ -73,7 +73,7 @@ public class VacationRequest extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public VacationRequest() {
+	public VacationRequestPanel() {
 		setBackground(new Color(191, 246, 195));
 		role = AuthenticationContextManager.getInstance().getAuthz();
 		user = AuthenticationContextManager.getInstance().getAuthn();

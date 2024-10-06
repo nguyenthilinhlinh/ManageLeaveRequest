@@ -19,34 +19,24 @@ import entity.Role;
 public class MainPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel panelStatistics;
-	private JPanel panelApproval;
-	private JPanel panelVacation;
+	
 	private JTabbedPane tabbedPaneApproval;
 	private JPanel panelPending;
 	private JPanel panelProcessed;
 	private Employees emp = null;
-	private Processed processed;
-	private PendingApproval pendingApproval;
-	private JPanel panelLeaveTypes;
-	private LeaveTypes leaveTypes;
-	private JPanel panelProfileEmployee;
-	private ProfileEmployee profileEmployee;
+	
+	private ProfilePanel profilePanel;
 
 	private Role role;
-	private Static static1;
-	private JPanel panelVactionRequest;
-	private NotificationPanel notificationPanel;
-
-	private JPanel sidebarPanel;
+	private SidebarPanel sidebarPanel;
+	private NavbarPanel navbarPanel;
 	private JPanel cardContentPanel;
 	private CardController cardController;
-
-	public MainPanel() {
+	
+	public MainPanel(CardController frameCardController) {
 
 		setLayout(new BorderLayout(0, 0));
-
-
+		
 		cardContentPanel = new JPanel();
 		add(cardContentPanel, BorderLayout.CENTER);
 		cardContentPanel.setLayout(new CardLayout(0, 0));
@@ -55,8 +45,10 @@ public class MainPanel extends JPanel {
 
 		initCardContentPanel();
 		
-		sidebarPanel = new SidebarPanel(cardController);
+		sidebarPanel = new SidebarPanel(cardController, frameCardController);
 		add(sidebarPanel, BorderLayout.WEST);
+		navbarPanel = new NavbarPanel();
+		add(navbarPanel, BorderLayout.NORTH);
 		
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -64,29 +56,19 @@ public class MainPanel extends JPanel {
 				emp = AuthenticationContextManager.getInstance().getAuthn();
 				role = AuthenticationContextManager.getInstance().getAuthz();
 				
-				notificationPanel = new NotificationPanel(emp.getEmployeeID());
-//				static1.loaddata(role, emp);
-				
-				profileEmployee = new ProfileEmployee();
-				profileEmployee.populateProfile(emp);
-				profileEmployee.setBounds(10, 11, 1042, 649);
-				panelProfileEmployee.add(profileEmployee);
+				profilePanel.populateProfile(emp);
+				sidebarPanel.updatePermissions();
+				navbarPanel.updatePermissions();
 			}
 		});
 
 	}
 
 	private void initCardContentPanel() {
-		panelStatistics = new JPanel();
-		panelStatistics.setBackground(new Color(243, 202, 82));
+		var panelStatistics = new StatisticsPanel();
 		cardController.addCard(panelStatistics, "Statistics");
-		panelStatistics.setLayout(null);
 
-		static1 = new Static();
-		static1.setBounds(10, 11, 1043, 649);
-		panelStatistics.add(static1);
-
-		panelApproval = new JPanel();
+		var panelApproval = new JPanel();
 		panelApproval.setBackground(new Color(243, 202, 82));
 		cardController.addCard(panelApproval, "Approval");
 		panelApproval.setLayout(null);
@@ -115,44 +97,19 @@ public class MainPanel extends JPanel {
 			}
 		});
 
-		panelVacation = new VacationRequest();
-		panelVacation.setBackground(new Color(243, 202, 82));
+		var panelVacation = new VacationRequestPanel();
 		cardController.addCard(panelVacation, "Vacation");
-		panelVacation.setLayout(null);
 
-		panelVactionRequest = new JPanel();
-		panelVactionRequest.setLayout(null);
-		panelVactionRequest.setBackground(new Color(191, 246, 195));
-		panelVactionRequest.setBounds(0, 0, 1055, 671);
-		panelVacation.add(panelVactionRequest);
-
-		panelLeaveTypes = new JPanel();
-		panelLeaveTypes.setBackground(new Color(243, 202, 82));
+		var panelLeaveTypes = new LeaveTypes();
 		cardController.addCard(panelLeaveTypes, "LeaveTypes");
-		panelLeaveTypes.setLayout(null);
 
-		leaveTypes = new LeaveTypes();
-		leaveTypes.setBounds(10, 11, 1043, 649);
-		panelLeaveTypes.add(leaveTypes);
-
-		panelProfileEmployee = new JPanel();
-		panelProfileEmployee.setBackground(new Color(243, 202, 82));
-		cardController.addCard(panelProfileEmployee, "ProfileEmployee");
-		panelProfileEmployee.setLayout(null);
+		profilePanel = new ProfilePanel();
+		cardController.addCard(profilePanel, "ProfileEmployee");
 	}
-
-//	private void loadVacationRequestsData() {
-//		panelVactionRequest.removeAll();
-//		vacationRequest = new VacationRequest(emp, role);
-//		vacationRequest.setBounds(10, 11, 1035, 649);
-//		panelVactionRequest.add(vacationRequest);
-//		panelVactionRequest.revalidate();
-//		panelVactionRequest.repaint();
-//	}
 
 	private void loadProcesedData() {
 		panelProcessed.removeAll();
-		processed = new Processed(emp, role);
+		var processed = new Processed(emp, role);
 		processed.setBounds(10, 11, 983, 581);
 		panelProcessed.add(processed);
 		panelProcessed.revalidate();
@@ -161,7 +118,7 @@ public class MainPanel extends JPanel {
 
 	private void loadPendingData() {
 		panelPending.removeAll();
-		pendingApproval = new PendingApproval(emp, role);
+		var pendingApproval = new PendingApproval(emp, role);
 		pendingApproval.setBounds(10, 11, 976, 577);
 		panelPending.add(pendingApproval);
 		panelPending.revalidate();

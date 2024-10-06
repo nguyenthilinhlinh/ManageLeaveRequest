@@ -26,7 +26,7 @@ import constants.UIConstants;
 
 import javax.swing.border.EtchedBorder;
 
-public class ProfileEmployee extends JPanel {
+public class ProfilePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel_1;
@@ -54,10 +54,11 @@ public class ProfileEmployee extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public ProfileEmployee() {
+	public ProfilePanel() {
 		setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(64, 0, 64)));
 		setSize(988, 530);
 		setLayout(new BorderLayout(0, 0));
+		setBackground(new Color(243, 202, 82));
 
 		panel_1 = new JPanel();
 		add(panel_1, BorderLayout.CENTER);

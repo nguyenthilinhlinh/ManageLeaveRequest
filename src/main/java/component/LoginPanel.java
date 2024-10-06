@@ -26,6 +26,7 @@ import javax.swing.SwingConstants;
 
 import constants.UIConstants;
 import context.AuthenticationContextManager;
+import context.CardController;
 import dao.EmployeeDao;
 import gui.JFrameMain;
 import java.awt.Canvas;
@@ -51,7 +52,7 @@ public class LoginPanel extends JPanel {
 	private final JTextField txtEmail;
 	private final JPasswordField txtPassword;
 	private final JCheckBox chkRememberMe;
-	private final JPanel parentPanel;
+	private final CardController frameCardController;
 	private final String successLoginRedirectCardName;
 	private final JLabel lblCopyright;
 	private int frameWidth = 0;
@@ -59,9 +60,9 @@ public class LoginPanel extends JPanel {
 
 	private final JPanel panel;
 
-	public LoginPanel(JPanel parentPanel, String successLoginRedirectCardName) {
+	public LoginPanel(CardController frameCardController, String successLoginRedirectCardName) {
 		setBorder(null);
-		this.parentPanel = parentPanel;
+		this.frameCardController = frameCardController;
 		this.successLoginRedirectCardName = successLoginRedirectCardName;
 		var imageIcon = new ImageIcon(new ImageIcon(JFrameMain.class.getResource("/asset/image/leave-management.png"))
 				.getImage().getScaledInstance(600, -1, java.awt.Image.SCALE_SMOOTH));
@@ -266,7 +267,7 @@ public class LoginPanel extends JPanel {
 				prefs.remove("password");
 			}
 
-			((CardLayout) parentPanel.getLayout()).show(parentPanel, successLoginRedirectCardName);
+			frameCardController.showCard(successLoginRedirectCardName);
 
 		} else {
 			JOptionPane.showMessageDialog(null, "The account does not exist, please re-enter");

@@ -61,7 +61,7 @@ public class AddLeaveRequest extends JPanel {
 	private Employees empOldReceiver;
 	private List<LeaveType> listLT;
 	private String statusLR;
-	private VacationRequest va;
+	private VacationRequestPanel va;
 	private LeaveRequests oldLR;
 	private LeaveType oldLT;
 	private LeaveType newLT;
@@ -342,7 +342,7 @@ public class AddLeaveRequest extends JPanel {
 		btnSubmit.setVisible(false);
 	}
 	
-	public void loadDataAdd(Employees emp, Role r, Boolean b, VacationRequest vR) {
+	public void loadDataAdd(Employees emp, Role r, Boolean b, VacationRequestPanel vR) {
 		va = vR;
 		user = emp;
 		var daoEmp = new EmployeeDao();
@@ -387,7 +387,7 @@ public class AddLeaveRequest extends JPanel {
 	}
 
 	public void LoadDataEdit(Employees emp, LeaveRequests lr, LeaveType lt, String fullname, Role r, LeaveDocument ld,
-			VacationRequest vR) {
+			VacationRequestPanel vR) {
 		va = vR;
 		oldLT = lt;
 		oldLR = lr;

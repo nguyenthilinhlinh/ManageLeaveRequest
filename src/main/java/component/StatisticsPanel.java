@@ -1,16 +1,30 @@
 package component;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
-import java.awt.BorderLayout;
-import java.awt.LayoutManager;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BorderFactory;
 import com.toedter.calendar.JCalendar;
 
 import constants.UIConstants;
@@ -21,33 +35,7 @@ import entity.Employees;
 import entity.LeaveRequests;
 import entity.Role;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import java.awt.Font;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.VetoableChangeListener;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
-
-public class Static extends JPanel {
+public class StatisticsPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
@@ -74,8 +62,10 @@ public class Static extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public Static() {
+	public StatisticsPanel() {
 		setBackground(new Color(191, 246, 195));
+
+//		panelStatistics.setBackground(new Color(243, 202, 82));
 		setBorder(new LineBorder(new Color(0, 0, 0)));
 		setLayout(null);
 		

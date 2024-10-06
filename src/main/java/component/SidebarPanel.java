@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Objects;
 
 import javax.swing.GroupLayout;
@@ -15,10 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import constants.UIConstants;
+import context.AuthenticationContextManager;
 import context.CardController;
 
 public class SidebarPanel extends JPanel {
-	
+
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPaneCard;
 	private JButton btnStatistics;
@@ -29,14 +32,13 @@ public class SidebarPanel extends JPanel {
 	private JButton btnProfileEmployee;
 	private JButton btnUserData;
 	private final transient CardController cardController;
-	
-	
-	public SidebarPanel(CardController cardController) {
-		
+	private final transient CardController frameCardController;
 
+	public SidebarPanel(CardController cardController, CardController frameCardController) {
 		setBackground(new Color(104, 109, 118));
-		
+
 		this.cardController = cardController;
+		this.frameCardController = frameCardController;
 		
 		Color colorbutton = Color.decode("#88D66C");
 		btnStatistics = new JButton("Statistics");
@@ -147,28 +149,39 @@ public class SidebarPanel extends JPanel {
 						.addGap(27)));
 		setLayout(gl_penalSiledbar);
 	}
-	
+
 	private void handleActionListener(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		switch (actionCommand) {
 		case "Statistics" -> showCard("Statistics", btnStatistics);
 		case "Approval" -> {
 			showCard("Approval", btnApproval);
-//			loadProcesedData();
-//			loadPendingData();
 		}
 		case "Vacation" -> {
 			showCard("Vacation", btnVacation);
-//			loadVacationRequestsData();
 		}
 		case "LeaveTypes" -> showCard("LeaveTypes", btnLeavetypes);
 		case "Profile" -> showCard("ProfileEmployee", btnProfileEmployee);
+		case "User Data" -> showCard("ProfileEmployee", btnProfileEmployee);
 		case "Logout" -> logout();
-//		case "Login" -> checkLogin();
-//		case "Reset" -> reset();
 		}
 	}
 	
+	public void updatePermissions() {
+		switch (AuthenticationContextManager.getInstance().getAuthz().getRoleName()) {
+
+		case "Admin" -> {
+			btnApproval.setVisible(true);
+			btnLeavetypes.setVisible(true);
+		}
+
+		case "Leader" -> {
+			btnApproval.setVisible(true);
+		}
+
+		}
+	}
+
 	private void showCard(String cardName, JButton button) {
 		highlightButton(button);
 		cardController.showCard(cardName);
@@ -188,12 +201,12 @@ public class SidebarPanel extends JPanel {
 		btnLogout.setBackground(defaultColor);
 		btnProfileEmployee.setBackground(defaultColor);
 	}
+
 	private void logout() {
 		resetButtonColors();
-		
-		CardLayout cardLayout = (CardLayout) contentPaneCard.getLayout();
-		cardLayout.show(contentPaneCard, "Login");
-		
+
+		frameCardController.showCard("Login");
+
 		btnApproval.setVisible(false);
 		btnLeavetypes.setVisible(false);
 	}
