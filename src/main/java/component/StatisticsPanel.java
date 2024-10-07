@@ -28,6 +28,7 @@ import javax.swing.table.TableColumn;
 import com.toedter.calendar.JCalendar;
 
 import constants.UIConstants;
+import context.MediatorColleague;
 import dao.EmployeeDao;
 import dao.LeaveRequestDao;
 import dao.LeaveTypeDao;
@@ -35,7 +36,7 @@ import entity.Employees;
 import entity.LeaveRequests;
 import entity.Role;
 
-public class StatisticsPanel extends JPanel {
+public class StatisticsPanel extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;

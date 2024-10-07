@@ -35,6 +35,7 @@ import javax.swing.table.TableRowSorter;
 
 import constants.UIConstants;
 import context.AuthenticationContextManager;
+import context.MediatorColleague;
 import dao.LeaveDocumentDao;
 import dao.LeaveHRDao;
 import dao.LeaveRequestDao;
@@ -46,7 +47,7 @@ import entity.LeaveType;
 import entity.Role;
 import helper.DateUtils;
 
-public class VacationRequestPanel extends JPanel {
+public class VacationRequestPanel extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 1L;
 	private JButton editButton;

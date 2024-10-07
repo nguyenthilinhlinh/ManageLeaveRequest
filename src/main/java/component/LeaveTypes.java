@@ -10,6 +10,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 import constants.UIConstants;
+import context.MediatorColleague;
 import dao.LeaveTypeDao;
 import entity.LeaveType;
 
@@ -23,10 +24,10 @@ import javax.swing.JOptionPane;
 import javax.swing.border.MatteBorder;
 import java.awt.Font;
 
-public class LeaveTypes extends JPanel {
+public class LeaveTypes extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 1L;
-	private JScrollPane scrollPane		;
+	private JScrollPane scrollPane;
 	private JTextField txtLeaveTypeID;
 	private JTextField txtLeaveTypeName;
 	private JTextField txtLeaveTypeDescription;
@@ -145,24 +146,25 @@ public class LeaveTypes extends JPanel {
 		loadData();
 
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-		    public void valueChanged(ListSelectionEvent event) {
-		        if (!event.getValueIsAdjusting()) {
-		            int selectedRow = table.getSelectedRow();
-		            if (selectedRow != -1) {
-		                // If a valid row is selected, populate the text fields with the selected row's data
-		                txtLeaveTypeID.setText(table.getValueAt(selectedRow, 0).toString());
-		                txtLeaveTypeName.setText(table.getValueAt(selectedRow, 1).toString());
-		                txtLeaveTypeDescription.setText(table.getValueAt(selectedRow, 2).toString());
-		                txtLeaveDaysPerYear.setText(table.getValueAt(selectedRow, 3).toString());
-		            } else {
-		                // If no row is selected, reset the form fields
-		                txtLeaveTypeID.setText("");
-		                txtLeaveTypeName.setText("");
-		                txtLeaveTypeDescription.setText("");
-		                txtLeaveDaysPerYear.setText("");
-		            }
-		        }
-		    }
+			public void valueChanged(ListSelectionEvent event) {
+				if (!event.getValueIsAdjusting()) {
+					int selectedRow = table.getSelectedRow();
+					if (selectedRow != -1) {
+						// If a valid row is selected, populate the text fields with the selected row's
+						// data
+						txtLeaveTypeID.setText(table.getValueAt(selectedRow, 0).toString());
+						txtLeaveTypeName.setText(table.getValueAt(selectedRow, 1).toString());
+						txtLeaveTypeDescription.setText(table.getValueAt(selectedRow, 2).toString());
+						txtLeaveDaysPerYear.setText(table.getValueAt(selectedRow, 3).toString());
+					} else {
+						// If no row is selected, reset the form fields
+						txtLeaveTypeID.setText("");
+						txtLeaveTypeName.setText("");
+						txtLeaveTypeDescription.setText("");
+						txtLeaveDaysPerYear.setText("");
+					}
+				}
+			}
 		});
 	}
 
@@ -202,34 +204,36 @@ public class LeaveTypes extends JPanel {
 
 	private void insertLeaveType() {
 
-
 		String leaveTypeIDText = txtLeaveTypeID.getText();
 		String leaveTypeName = txtLeaveTypeName.getText();
 		String leaveTypeDescription = txtLeaveTypeDescription.getText();
 		String leaveDaysPerYearText = txtLeaveDaysPerYear.getText();
 
 		if (leaveTypeIDText.isEmpty() || leaveTypeName.isEmpty() || leaveTypeDescription.isEmpty()
-		        || leaveDaysPerYearText.isEmpty()) {
-		    JOptionPane.showMessageDialog(null, "All fields must be filled out.", "Input Error", JOptionPane.ERROR_MESSAGE);
-		    return;
+				|| leaveDaysPerYearText.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "All fields must be filled out.", "Input Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 
 		int leaveTypeID;
 		int leaveDaysPerYear;
 		try {
-		    leaveTypeID = Integer.parseInt(leaveTypeIDText);
-		    leaveDaysPerYear = Integer.parseInt(leaveDaysPerYearText);
+			leaveTypeID = Integer.parseInt(leaveTypeIDText);
+			leaveDaysPerYear = Integer.parseInt(leaveDaysPerYearText);
 		} catch (NumberFormatException e) {
-		    JOptionPane.showMessageDialog(null, "LeaveTypeID and LeaveDaysPerYear must be valid integers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-		    return;
+			JOptionPane.showMessageDialog(null, "LeaveTypeID and LeaveDaysPerYear must be valid integers.",
+					"Input Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
-		
-		 LeaveTypeDao dao = new LeaveTypeDao();
 
-	        if (dao.leaveTypeNameExists(leaveTypeName)) {
-	            JOptionPane.showMessageDialog(null, "This type of leave is now available.", "Input Error", JOptionPane.ERROR_MESSAGE);
-	            return;
-	        }
+		LeaveTypeDao dao = new LeaveTypeDao();
+
+		if (dao.leaveTypeNameExists(leaveTypeName)) {
+			JOptionPane.showMessageDialog(null, "This type of leave is now available.", "Input Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		// Create LeaveType object
 		LeaveType leaveType = new LeaveType();
@@ -237,63 +241,66 @@ public class LeaveTypes extends JPanel {
 		leaveType.setLeaveTypeName(leaveTypeName);
 		leaveType.setLeaveTypeDescription(leaveTypeDescription);
 		leaveType.setLeaveDaysPerYear(leaveDaysPerYear);
-	
 
 		// Insert into database
 		boolean success = dao.insertLeaveType(leaveType);
 
 		if (success) {
-		    loadData();
-		    txtLeaveTypeID.setText("");
-		    txtLeaveTypeName.setText("");
-		    txtLeaveTypeDescription.setText("");
-		    txtLeaveDaysPerYear.setText("");
+			loadData();
+			txtLeaveTypeID.setText("");
+			txtLeaveTypeName.setText("");
+			txtLeaveTypeDescription.setText("");
+			txtLeaveDaysPerYear.setText("");
 		} else {
-		    JOptionPane.showMessageDialog(null, "Failed to insert LeaveType.", "Database Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Failed to insert LeaveType.", "Database Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	private void updateLeaveType() {
-        String leaveTypeIDText = txtLeaveTypeID.getText();
-        String leaveTypeName = txtLeaveTypeName.getText();
-        String leaveTypeDescription = txtLeaveTypeDescription.getText();
-        String leaveDaysPerYearText = txtLeaveDaysPerYear.getText();
+		String leaveTypeIDText = txtLeaveTypeID.getText();
+		String leaveTypeName = txtLeaveTypeName.getText();
+		String leaveTypeDescription = txtLeaveTypeDescription.getText();
+		String leaveDaysPerYearText = txtLeaveDaysPerYear.getText();
 
-        if (leaveTypeIDText.isEmpty() || leaveTypeName.isEmpty() || leaveTypeDescription.isEmpty()
-                || leaveDaysPerYearText.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "All fields must be filled out.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+		if (leaveTypeIDText.isEmpty() || leaveTypeName.isEmpty() || leaveTypeDescription.isEmpty()
+				|| leaveDaysPerYearText.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "All fields must be filled out.", "Input Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
-        int leaveTypeID;
-        int leaveDaysPerYear;
-        try {
-            leaveTypeID = Integer.parseInt(leaveTypeIDText);
-            leaveDaysPerYear = Integer.parseInt(leaveDaysPerYearText);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "LeaveTypeID and LeaveDaysPerYear must be valid integers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+		int leaveTypeID;
+		int leaveDaysPerYear;
+		try {
+			leaveTypeID = Integer.parseInt(leaveTypeIDText);
+			leaveDaysPerYear = Integer.parseInt(leaveDaysPerYearText);
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "LeaveTypeID and LeaveDaysPerYear must be valid integers.",
+					"Input Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
-        // Create LeaveType object
-        LeaveType leaveType = new LeaveType();
-        leaveType.setLeaveTypeID(leaveTypeID);
-        leaveType.setLeaveTypeName(leaveTypeName);
-        leaveType.setLeaveTypeDescription(leaveTypeDescription);
-        leaveType.setLeaveDaysPerYear(leaveDaysPerYear);
+		// Create LeaveType object
+		LeaveType leaveType = new LeaveType();
+		leaveType.setLeaveTypeID(leaveTypeID);
+		leaveType.setLeaveTypeName(leaveTypeName);
+		leaveType.setLeaveTypeDescription(leaveTypeDescription);
+		leaveType.setLeaveDaysPerYear(leaveDaysPerYear);
 
-        // Update in database
-        LeaveTypeDao dao = new LeaveTypeDao();
-        boolean success = dao.updateLeaveType(leaveType);
+		// Update in database
+		LeaveTypeDao dao = new LeaveTypeDao();
+		boolean success = dao.updateLeaveType(leaveType);
 
-        if (success) {
-            loadData();
-            txtLeaveTypeID.setText("");
-            txtLeaveTypeName.setText("");
-            txtLeaveTypeDescription.setText("");
-            txtLeaveDaysPerYear.setText("");
-        } else {
-            JOptionPane.showMessageDialog(null, "Failed to update LeaveType.", "Database Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+		if (success) {
+			loadData();
+			txtLeaveTypeID.setText("");
+			txtLeaveTypeName.setText("");
+			txtLeaveTypeDescription.setText("");
+			txtLeaveDaysPerYear.setText("");
+		} else {
+			JOptionPane.showMessageDialog(null, "Failed to update LeaveType.", "Database Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 }

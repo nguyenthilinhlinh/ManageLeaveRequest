@@ -2,18 +2,13 @@ package component;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
-import context.AuthenticationContextManager;
-import context.CardController;
-import entity.Employees;
-import entity.Role;
+import context.MediatorCardController;
+import context.MediatorColleague;
 
-public class MainPanel extends JPanel {
+public class MainPanel extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -23,53 +18,36 @@ public class MainPanel extends JPanel {
 	private JPanel cardContentPanel;
 	private ApprovalPanel panelApproval;
 
-	private final CardController cardController;
-	
-	public MainPanel(CardController frameCardController) {
-
+	public MainPanel(MediatorCardController frameCardController) {
 		setLayout(new BorderLayout(0, 0));
-		
 		cardContentPanel = new JPanel();
 		add(cardContentPanel, BorderLayout.CENTER);
 		cardContentPanel.setLayout(new CardLayout(0, 0));
 		
-		cardController = new CardController(cardContentPanel);
+		var cardController = new MediatorCardController(cardContentPanel);
 
-		initCardContentPanel();
+		var panelStatistics = new StatisticsPanel();
+		cardController.addCardLazy(panelStatistics, "Statistics");
+		panelApproval = new ApprovalPanel();
+		cardController.addCardLazy(panelApproval, "Approval");
+		var panelVacation = new VacationRequestPanel();
+		cardController.addCardLazy(panelVacation, "Vacation");
+		var panelLeaveTypes = new LeaveTypes();
+		cardController.addCardLazy(panelLeaveTypes, "LeaveTypes");
+		profilePanel = new ProfilePanel();
+		cardController.addCardLazy(profilePanel, "ProfileEmployee");
 		
 		sidebarPanel = new SidebarPanel(cardController, frameCardController);
 		add(sidebarPanel, BorderLayout.WEST);
 		navbarPanel = new NavbarPanel();
 		add(navbarPanel, BorderLayout.NORTH);
-		
-		addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-				profilePanel.updatePermissions();
-				sidebarPanel.updatePermissions();
-				navbarPanel.updatePermissions();
-				panelApproval.updatePermissions();
-			}
-		});
 
 	}
 
-	private void initCardContentPanel() {
-		var panelStatistics = new StatisticsPanel();
-		cardController.addCard(panelStatistics, "Statistics");
-
-		panelApproval = new ApprovalPanel();
-		cardController.addCard(panelApproval, "Approval");
-
-		var panelVacation = new VacationRequestPanel();
-		cardController.addCard(panelVacation, "Vacation");
-
-		var panelLeaveTypes = new LeaveTypes();
-		cardController.addCard(panelLeaveTypes, "LeaveTypes");
-
-		profilePanel = new ProfilePanel();
-		cardController.addCard(profilePanel, "ProfileEmployee");
+	@Override
+	public void onNotify() {
+		sidebarPanel.updatePermissions();
+		navbarPanel.updatePermissions();
 	}
 
-	
 }

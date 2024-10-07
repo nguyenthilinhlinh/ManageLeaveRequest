@@ -15,11 +15,16 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import component.LoginPanel;
 import component.MainPanel;
-import context.CardController;
+import context.MediatorCardController;
 
 public class JFrameMain extends JFrame {
+	
+    private static Logger logger = LogManager.getLogger(JFrameMain.class);
 
 	private static final long serialVersionUID = 1L;
 	private final LoginPanel panelLogin;
@@ -37,8 +42,9 @@ public class JFrameMain extends JFrame {
 			try {
 				JFrameMain frame = new JFrameMain();
 				frame.setVisible(true);
+				logger.info("Application started!");
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Failed to startup application", e);
 			}
 		});
 	}
@@ -65,12 +71,13 @@ public class JFrameMain extends JFrame {
 		contentPaneCard.setLayout(new CardLayout(0, 0));
 		setContentPane(contentPaneCard);
 		
-		final var frameCardController = new CardController(contentPaneCard);
 		
-		panelLogin = new LoginPanel(frameCardController, "Main");
-		frameCardController.addCard(panelLogin, "Login");
+		final var frameCardController = new MediatorCardController(contentPaneCard);
+		
+		panelLogin = new LoginPanel(frameCardController);
+		frameCardController.addCardLazy(panelLogin, "Login");
 		panelMain = new MainPanel(frameCardController);
-		frameCardController.addCard(panelMain, "Main");
+		frameCardController.addCardLazy(panelMain, "Main");
 		
 		ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/a.png")));
 		setIconImage(icon.getImage());

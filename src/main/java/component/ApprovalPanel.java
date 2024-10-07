@@ -9,10 +9,11 @@ import javax.swing.JTabbedPane;
 
 import constants.UIConstants;
 import context.AuthenticationContextManager;
+import context.MediatorColleague;
 import entity.Employees;
 import entity.Role;
 
-public class ApprovalPanel extends JPanel {
+public class ApprovalPanel extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 7266477092442756748L;
 	private JPanel panelProcessed;
@@ -50,7 +51,8 @@ public class ApprovalPanel extends JPanel {
 		});
 	}
 	
-	public void updatePermissions() {
+	@Override
+	public void onNotify() {
 		emp = AuthenticationContextManager.getInstance().getAuthn();
 		role = AuthenticationContextManager.getInstance().getAuthz();
 		

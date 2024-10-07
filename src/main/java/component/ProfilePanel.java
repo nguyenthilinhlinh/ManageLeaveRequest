@@ -24,10 +24,11 @@ import javax.swing.border.TitledBorder;
 
 import constants.UIConstants;
 import context.AuthenticationContextManager;
+import context.MediatorColleague;
 
 import javax.swing.border.EtchedBorder;
 
-public class ProfilePanel extends JPanel {
+public class ProfilePanel extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel_1;
@@ -203,11 +204,11 @@ public class ProfilePanel extends JPanel {
 		panel.add(lblNewLabel);
 
 	}
-
-	public void updatePermissions() {
+	
+	@Override
+	public void onNotify() {
 		var emp = AuthenticationContextManager.getInstance().getAuthn();
 		var dao = new ProfileEmpDao();
-		var daoEmp = new EmployeeDao();
 		var profile = dao.getProfileById(emp.getEmployeeID());
 		if (profile != null) {
 			textFullName.setText(emp.getEmployeeName());

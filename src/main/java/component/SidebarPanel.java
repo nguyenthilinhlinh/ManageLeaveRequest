@@ -1,12 +1,9 @@
 package component;
 
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.Objects;
 
 import javax.swing.GroupLayout;
@@ -18,12 +15,11 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import constants.UIConstants;
 import context.AuthenticationContextManager;
-import context.CardController;
+import context.MediatorCardController;
 
 public class SidebarPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPaneCard;
 	private JButton btnStatistics;
 	private JButton btnApproval;
 	private JButton btnVacation;
@@ -31,10 +27,10 @@ public class SidebarPanel extends JPanel {
 	private JButton btnLogout;
 	private JButton btnProfileEmployee;
 	private JButton btnUserData;
-	private final transient CardController cardController;
-	private final transient CardController frameCardController;
+	private final transient MediatorCardController cardController;
+	private final transient MediatorCardController frameCardController;
 
-	public SidebarPanel(CardController cardController, CardController frameCardController) {
+	public SidebarPanel(MediatorCardController cardController, MediatorCardController frameCardController) {
 		setBackground(new Color(104, 109, 118));
 
 		this.cardController = cardController;
