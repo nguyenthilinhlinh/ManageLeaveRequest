@@ -26,9 +26,8 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21">
 		<attributes>
-			<attribute name="module" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
@@ -37,9 +36,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="com.miglayout.swing_11.3.0.jar"/>
-	<classpathentry kind="lib" path="com.miglayout.core_11.3.0.jar"/>
-	<classpathentry kind="lib" path="com.jgoodies.common_1.8.1.v20240327-0800.jar"/>
-	<classpathentry kind="lib" path="com.jgoodies.forms_1.9.0.v20240327-0800.jar"/>
+	<classpathentry kind="lib" path="libs/com.miglayout.swing_11.3.0.jar"/>
+	<classpathentry kind="lib" path="libs/com.miglayout.core_11.3.0.jar"/>
+	<classpathentry kind="lib" path="libs/com.jgoodies.common_1.8.1.v20240327-0800.jar"/>
+	<classpathentry kind="lib" path="libs/com.jgoodies.forms_1.9.0.v20240327-0800.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

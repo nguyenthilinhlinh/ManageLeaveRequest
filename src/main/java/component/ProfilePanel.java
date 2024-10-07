@@ -7,6 +7,8 @@ import javax.swing.*;
 
 import java.awt.Font;
 import java.awt.Image;
+import java.util.Date;
+import java.util.Optional;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.GroupLayout.Alignment;
@@ -19,9 +21,14 @@ import dao.ProfileEmpDao;
 
 import java.awt.GridLayout;
 import javax.swing.border.TitledBorder;
+
+import constants.UIConstants;
+import context.AuthenticationContextManager;
+import context.MediatorColleague;
+
 import javax.swing.border.EtchedBorder;
 
-public class ProfileEmployee extends JPanel {
+public class ProfilePanel extends JPanel implements MediatorColleague {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel_1;
@@ -49,10 +56,11 @@ public class ProfileEmployee extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public ProfileEmployee() {
+	public ProfilePanel() {
 		setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(64, 0, 64)));
 		setSize(988, 530);
 		setLayout(new BorderLayout(0, 0));
+		setBackground(new Color(243, 202, 82));
 
 		panel_1 = new JPanel();
 		add(panel_1, BorderLayout.CENTER);
@@ -93,25 +101,25 @@ public class ProfileEmployee extends JPanel {
 
 		lblFullName = new JLabel("<html><b>Full Name :</b></html>\r\n");
 		lblFullName.setBounds(39, 77, 131, 41);
-		lblFullName.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblFullName.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		lblFullName.setHorizontalAlignment(SwingConstants.LEFT);
 		panelProfile.add(lblFullName);
 
 		lblNewLabel_4 = new JLabel("<html><b>Email :</b></html>\r\n");
 		lblNewLabel_4.setBounds(39, 129, 131, 41);
-		lblNewLabel_4.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_4.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		lblNewLabel_4.setHorizontalAlignment(SwingConstants.LEFT);
 		panelProfile.add(lblNewLabel_4);
 
 		lblDateOfBirth = new JLabel("Date Of Birth :");
 		lblDateOfBirth.setBounds(39, 180, 131, 41);
-		lblDateOfBirth.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblDateOfBirth.setFont(new Font(UIConstants.FONT_FAMILY, Font.BOLD, 18));
 		lblDateOfBirth.setHorizontalAlignment(SwingConstants.LEFT);
 		panelProfile.add(lblDateOfBirth);
 
 		lblGender = new JLabel("Gender :");
 		lblGender.setBounds(39, 232, 131, 41);
-		lblGender.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblGender.setFont(new Font(UIConstants.FONT_FAMILY, Font.BOLD, 18));
 		lblGender.setHorizontalAlignment(SwingConstants.LEFT);
 		panelProfile.add(lblGender);
 
@@ -123,7 +131,7 @@ public class ProfileEmployee extends JPanel {
 
 		rbMale = new JRadioButton("Male");
 		rbMale.setBackground(new Color(191, 246, 195));
-		rbMale.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		rbMale.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		rbMale.setBounds(6, 5, 84, 36);
 		rbMale.setMnemonic('M');
 		rbMale.setEnabled(false);
@@ -132,7 +140,7 @@ public class ProfileEmployee extends JPanel {
 
 		rbFemale = new JRadioButton("Female");
 		rbFemale.setBackground(new Color(191, 246, 195));
-		rbFemale.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		rbFemale.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		rbFemale.setBounds(129, 5, 84, 36);
 		rbFemale.setMnemonic('F');
 		rbFemale.setEnabled(false);
@@ -143,45 +151,45 @@ public class ProfileEmployee extends JPanel {
 		lblPhoneNumber = new JLabel("Phone Number :");
 		lblPhoneNumber.setBounds(39, 284, 173, 41);
 		lblPhoneNumber.setHorizontalAlignment(SwingConstants.LEFT);
-		lblPhoneNumber.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblPhoneNumber.setFont(new Font(UIConstants.FONT_FAMILY, Font.BOLD, 18));
 		panelProfile.add(lblPhoneNumber);
 
 		lblAddress = new JLabel("Address :");
 		lblAddress.setBounds(39, 336, 173, 41);
 		lblAddress.setHorizontalAlignment(SwingConstants.LEFT);
-		lblAddress.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblAddress.setFont(new Font(UIConstants.FONT_FAMILY, Font.BOLD, 18));
 		panelProfile.add(lblAddress);
 
 		textFullName = new JTextField();
-		textFullName.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textFullName.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		textFullName.setEditable(false);
 		textFullName.setColumns(10);
 		textFullName.setBounds(222, 76, 392, 41);
 		panelProfile.add(textFullName);
 
 		textEmail = new JTextField();
-		textEmail.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textEmail.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		 textEmail.setEditable(false);
 		textEmail.setColumns(10);
 		textEmail.setBounds(222, 129, 392, 41);
 		panelProfile.add(textEmail);
 
 		textDateOfBirth = new JTextField();
-		textDateOfBirth.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textDateOfBirth.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		textDateOfBirth.setEditable(false);
 		textDateOfBirth.setColumns(10);
 		textDateOfBirth.setBounds(222, 180, 392, 41);
 		panelProfile.add(textDateOfBirth);
 
 		textPhone = new JTextField();
-		textPhone.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textPhone.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		textPhone.setEditable(false);
 		textPhone.setColumns(10);
 		textPhone.setBounds(222, 284, 392, 41);
 		panelProfile.add(textPhone);
 
 		textAddress = new JTextField();
-		textAddress.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textAddress.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 18));
 		textAddress.setEditable(false);
 		textAddress.setColumns(10);
 		textAddress.setBounds(222, 336, 392, 41);
@@ -192,19 +200,21 @@ public class ProfileEmployee extends JPanel {
 		add(panel, BorderLayout.NORTH);
 		
 		lblNewLabel = new JLabel("ProFile Employee");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblNewLabel.setFont(new Font(UIConstants.FONT_FAMILY, Font.BOLD, 24));
 		panel.add(lblNewLabel);
 
 	}
-
-	public void populateProfile(Employees emp) {
+	
+	@Override
+	public void onNotify() {
+		var emp = AuthenticationContextManager.getInstance().getAuthn();
 		var dao = new ProfileEmpDao();
-		var daoEmp = new EmployeeDao();
 		var profile = dao.getProfileById(emp.getEmployeeID());
 		if (profile != null) {
 			textFullName.setText(emp.getEmployeeName());
 			textEmail.setText(emp.getEmail());
-			textDateOfBirth.setText(profile.getDateOfBirth().toString());
+			Optional.ofNullable(profile.getDateOfBirth()).map(Date::toString)
+				.ifPresent(textDateOfBirth::setText);
 			textPhone.setText(profile.getPhoneNumber());
 			textAddress.setText(profile.getAddress());
 

@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import constants.UIConstants;
 import dao.EmployeeDao;
 import dao.LeaveHRDao;
 import dao.LeaveRequestDao;
@@ -52,11 +53,10 @@ public class Processed extends JPanel {
 		scrollPane = new JScrollPane();
 		add(scrollPane, BorderLayout.CENTER);
 
-		table = new JTable();
-		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		table = new StyledTable();
 		scrollPane.setViewportView(table);
 		JTableHeader header = table.getTableHeader();
-		header.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		header.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 
 		panelSearch = new JPanel();
 		panelSearch.setBackground(new Color(191, 246, 195));
@@ -68,7 +68,7 @@ public class Processed extends JPanel {
 				txtSearchActionPerformed(e);
 			}
 		});
-		txtSearch.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtSearch.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		txtSearch.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"<html><div style=\"font-size:16px\">Search</html></div>", TitledBorder.LEADING, TitledBorder.TOP, null,
@@ -83,7 +83,7 @@ public class Processed extends JPanel {
 				cbbLeaveTypeActionPerformed(e);
 			}
 		});
-		cbbLeaveType.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		cbbLeaveType.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		cbbLeaveType.setModel(new DefaultComboBoxModel(new String[] {"", "Approved", "Rejected"}));
 		GroupLayout gl_panelSearch = new GroupLayout(panelSearch);
 		gl_panelSearch.setHorizontalGroup(gl_panelSearch.createParallelGroup(Alignment.TRAILING)

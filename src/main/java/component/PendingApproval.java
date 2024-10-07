@@ -18,6 +18,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import constants.UIConstants;
 import dao.EmployeeDao;
 import dao.LeaveHRDao;
 import dao.LeaveRequestDao;
@@ -74,7 +75,7 @@ public class PendingApproval extends JPanel {
 				comboBoxActionPerformed(e);
 			}
 		});
-		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		comboBox.setFont(new Font(UIConstants.FONT_FAMILY, Font.PLAIN, 16));
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"", "Pending", "Wathching"}));
 		GroupLayout gl_panelTop = new GroupLayout(panelTop);
 		gl_panelTop.setHorizontalGroup(
@@ -166,10 +167,7 @@ public class PendingApproval extends JPanel {
 		scrollPane = new JScrollPane();
 		add(scrollPane, BorderLayout.CENTER);
 
-		table = new JTable();
-		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		JTableHeader header = table.getTableHeader();
-	    header.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		table = new StyledTable();
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -178,15 +176,6 @@ public class PendingApproval extends JPanel {
 		});
 		scrollPane.setViewportView(table);
 		showAllRequest();
-
-//		pLR.addApproveActionListener(new ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				pLR.UpdateApprovateStatus(e);
-//				showAllRequest()
-//			}
-//		});
 	}
 
 
@@ -238,7 +227,6 @@ public class PendingApproval extends JPanel {
 //		});
 		
 		dao.getLeaveRequestForAdmin(1, role).stream().forEach(lr -> {
-				System.out.println(lr.getStatusLR());
 		        employee = daoEmp.getEmp(lr.getEmployeeId());
 		        if (employee != null && employee.getEmployeeID() != user.getEmployeeID()) {
 		            model.addRow(new Object[] {
