@@ -23,6 +23,7 @@ import java.awt.GridLayout;
 import javax.swing.border.TitledBorder;
 
 import constants.UIConstants;
+import context.AuthenticationContextManager;
 
 import javax.swing.border.EtchedBorder;
 
@@ -203,7 +204,8 @@ public class ProfilePanel extends JPanel {
 
 	}
 
-	public void populateProfile(Employees emp) {
+	public void updatePermissions() {
+		var emp = AuthenticationContextManager.getInstance().getAuthn();
 		var dao = new ProfileEmpDao();
 		var daoEmp = new EmployeeDao();
 		var profile = dao.getProfileById(emp.getEmployeeID());

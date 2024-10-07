@@ -58,8 +58,6 @@ public class SidebarPanel extends JPanel {
 		btnApproval.setMnemonic('A');
 		btnApproval.setBackground(colorbutton);
 		btnApproval.addActionListener(this::handleActionListener);
-		btnStatistics.setIcon(new ImageIcon(
-				new ImageIcon("image/statistic.png").getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
 		ImageIcon iconcheck = new ImageIcon(Objects.requireNonNull(getClass().getResource("/asset/image/check.png")));
 		Image resizedImagecheck = iconcheck.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		ImageIcon resizedIconcheck = new ImageIcon(resizedImagecheck);

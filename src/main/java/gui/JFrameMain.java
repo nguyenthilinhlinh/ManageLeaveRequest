@@ -48,23 +48,20 @@ public class JFrameMain extends JFrame {
 	 */
 	public JFrameMain() {
 		setBackground(new Color(243, 202, 82));
+		setResizable(false);
 		setTitle("Leave Management Application");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int screenWidth = screenSize.width;
 		int screenHeight = screenSize.height;
 
-		// Tính toán kích thước hợp lý, có thể là 70% chiều rộng và 70% chiều cao của
-		// màn hình
-		int frameWidth = (int) (screenWidth * 0.8);
-		int frameHeight = (int) (screenHeight * 0.8);
 
-		// Thiết lập kích thước và vị trí cho JFrame
+		int frameWidth = (int) (screenWidth * 0.7);
+		int frameHeight = (int) (screenHeight * 0.7);
 		setBounds((screenWidth - frameWidth) / 2, (screenHeight - frameHeight) / 2, frameWidth, frameHeight);
 
 		final var contentPaneCard = new JPanel();
 		contentPaneCard.setBackground(new Color(243, 202, 82));
-		contentPaneCard.setPreferredSize(new Dimension(800, 600));
 		contentPaneCard.setLayout(new CardLayout(0, 0));
 		setContentPane(contentPaneCard);
 		
